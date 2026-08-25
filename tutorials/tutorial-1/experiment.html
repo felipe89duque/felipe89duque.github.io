@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial 1: Interactive Simulator</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../../index.html">Axon Lab</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../../index.html" class="nav-link">Home</a></li>
+                <li><a href="../../index.html#tutorials" class="nav-link">Tutorials</a></li>
+                <li><span class="nav-link-text">Tutorial 1 - Simulator</span></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="tutorial-container tutorial-layout">
+        <aside class="concept-sidebar" id="conceptSidebar" aria-label="Key concepts sidebar">
+            <div class="concept-sidebar-header">
+                <div>
+                    <p class="eyebrow">Quick concepts</p>
+                    <h2>Membrane basics</h2>
+                </div>
+                <button id="conceptToggle" class="concept-toggle" type="button" aria-expanded="true" aria-controls="conceptPanel">Hide</button>
+            </div>
+
+            <div id="conceptPanel" class="concept-panel">
+                <div class="concept-card">
+                    <h3>1. Gradients</h3>
+                    <p>K⁺ is high inside the cell, while Na⁺ and Cl⁻ are higher outside.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h3>2. Equilibrium</h3>
+                    <p>Each ion has its own voltage where electrical and chemical forces balance.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h3>3. Permeability</h3>
+                    <p>The membrane potential moves toward the ion that is most permeable.</p>
+                </div>
+
+                <div class="formula-box">
+                    <p>Vm ≈ 61.5 × log10[(PK·Kout + PNa·Naout + PCl·Clin) / (PK·Kin + PNa·Nain + PCl·Clout)]</p>
+                </div>
+            </div>
+        </aside>
+
+        <section class="tutorial-section simulator-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Tutorial 1</p>
+                    <h1>Resting membrane potential</h1>
+                </div>
+                <div class="quick-actions">
+                    <a href="intro.html" class="btn btn-outline small">Intro</a>
+                    <a href="questions.html" class="btn btn-primary small">Questions</a>
+                </div>
+            </div>
+
+            <p class="intro-text">
+                Pick a preset or move any slider. The membrane potential updates instantly as you change ion concentrations and permeability.
+            </p>
+
+            <div class="parameter-bar">
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Extracellular</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="kOut">K⁺ out <span id="kOut-value">5</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="kOut" class="slider" min="0.5" max="20" step="0.5" value="5">
+                                <input type="number" id="kOut-input" class="numeric-input" min="0.5" max="20" step="0.5" value="5">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="naOut">Na⁺ out <span id="naOut-value">145</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="naOut" class="slider" min="80" max="200" step="5" value="145">
+                                <input type="number" id="naOut-input" class="numeric-input" min="80" max="200" step="5" value="145">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="clOut">Cl⁻ out <span id="clOut-value">110</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="clOut" class="slider" min="50" max="150" step="5" value="110">
+                                <input type="number" id="clOut-input" class="numeric-input" min="50" max="150" step="5" value="110">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Intracellular</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="kIn">K⁺ in <span id="kIn-value">140</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="kIn" class="slider" min="80" max="160" step="5" value="140">
+                                <input type="number" id="kIn-input" class="numeric-input" min="80" max="160" step="5" value="140">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="naIn">Na⁺ in <span id="naIn-value">12</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="naIn" class="slider" min="5" max="50" step="1" value="12">
+                                <input type="number" id="naIn-input" class="numeric-input" min="5" max="50" step="1" value="12">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="clIn">Cl⁻ in <span id="clIn-value">4</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="clIn" class="slider" min="1" max="20" step="1" value="4">
+                                <input type="number" id="clIn-input" class="numeric-input" min="1" max="20" step="1" value="4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Permeability</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="pK">P<sub>K</sub> <span id="pK-value">1.00</span></label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="pK" class="slider" min="0" max="1" step="0.05" value="1">
+                                <input type="number" id="pK-input" class="numeric-input" min="0" max="1" step="0.05" value="1">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="pNa">P<sub>Na</sub> <span id="pNa-value">0.04</span></label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="pNa" class="slider" min="0" max="1" step="0.05" value="0.04">
+                                <input type="number" id="pNa-input" class="numeric-input" min="0" max="1" step="0.05" value="0.04">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="pCl">P<sub>Cl</sub> <span id="pCl-value">0.20</span></label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="pCl" class="slider" min="0" max="1" step="0.05" value="0.20">
+                                <input type="number" id="pCl-input" class="numeric-input" min="0" max="1" step="0.05" value="0.20">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="simulator-grid">
+                <div class="control-panel">
+                    <h2>Quick controls</h2>
+
+                    <div class="control-group">
+                        <div class="condition-buttons">
+                            <button class="condition-btn active" data-condition="normal">Normal</button>
+                            <button class="condition-btn" data-condition="hyperkalemia">High K⁺</button>
+                            <button class="condition-btn" data-condition="hypokalemia">Low K⁺</button>
+                            <button class="condition-btn" data-condition="highNa">High Na⁺</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group compact-actions">
+                        <button id="reset-btn" class="btn btn-outline" style="width:100%;">Reset</button>
+                        <button id="clear-btn" class="btn btn-outline" style="width:100%; margin-top:8px;">Clear graph</button>
+                    </div>
+
+                    <div class="calculation-display">
+                        <button id="toggle-calc" class="btn-toggle" type="button">Show GHK calculation</button>
+                        <div id="calc-content" class="calc-hidden">
+                            <div class="calculation-box">
+                                <p class="equation-label">GHK Equation</p>
+                                <p id="ghk-equation" class="equation">V<sub>m</sub> = 61.5 × log₁₀([numerator] / [denominator])</p>
+                                <p id="ghk-values" class="calc-values"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mini-summary">
+                        <div class="mini-stat">
+                            <span>Vm</span>
+                            <strong id="vm-display">-70.0 mV</strong>
+                        </div>
+                        <div class="mini-stat">
+                            <span>EK</span>
+                            <strong id="ek-display">-89.0 mV</strong>
+                        </div>
+                        <div class="mini-stat">
+                            <span>ENa</span>
+                            <strong id="ena-display">+60.0 mV</strong>
+                        </div>
+                        <div class="mini-stat">
+                            <span>ECl</span>
+                            <strong id="ecl-display">-70.0 mV</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <div class="chart-header">
+                        <h2>Real-time plot</h2>
+                        <div class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</div>
+                    </div>
+                    <canvas id="vmChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <div class="exploration-guide">
+                <h2>Try these experiments</h2>
+                <p>Use the preset buttons or one of these quick challenges:</p>
+
+                <div class="guide-items">
+                    <div class="guide-item">
+                        <h4>Isolate K⁺</h4>
+                        <p>Set P<sub>Na</sub> and P<sub>Cl</sub> to 0, then increase K⁺ outside.</p>
+                        <button class="guide-btn" data-setup="isolateK" type="button">Try it</button>
+                    </div>
+
+                    <div class="guide-item">
+                        <h4>Isolate Na⁺</h4>
+                        <p>Set P<sub>K</sub> and P<sub>Cl</sub> to 0, then raise Na⁺ outside.</p>
+                        <button class="guide-btn" data-setup="isolateNa" type="button">Try it</button>
+                    </div>
+
+                    <div class="guide-item">
+                        <h4>Hyperkalemia</h4>
+                        <p>Increase K⁺ outside to 10 mM and watch the membrane move upward.</p>
+                        <button class="guide-btn" data-setup="hyperkalemia" type="button">Try it</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="intro.html" class="btn btn-outline">← Intro</a>
+                <a href="questions.html" class="btn btn-primary">Next: questions →</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Interactive Neurophysiology Learning Platform. For educational purposes.</p>
+    </footer>
+
+    <!-- Script Imports -->
+    <script src="../../js/modules/ghkCalculator.js"></script>
+    <script src="../../js/modules/ionConcentration.js"></script>
+    <script src="../../js/modules/simulator.js"></script>
+    <script src="../../js/modules/visualization.js"></script>
+    <script src="../../js/simulatorController.js"></script>
+    <script>
+        const conceptSidebar = document.getElementById('conceptSidebar');
+        const conceptToggle = document.getElementById('conceptToggle');
+        const tutorialLayout = document.querySelector('.tutorial-layout');
+
+        if (conceptSidebar && conceptToggle && tutorialLayout) {
+            conceptToggle.addEventListener('click', () => {
+                const isCollapsed = conceptSidebar.classList.toggle('collapsed');
+                tutorialLayout.classList.toggle('sidebar-collapsed', isCollapsed);
+                conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
+                conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
+            });
+        }
+    </script>
+</body>
+</html>

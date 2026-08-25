@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial 1: Concepts - Equilibrium Potentials & GHK</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+    <link rel="stylesheet" href="../../css/tutorial.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../../index.html" aria-label="NeuroPhys Lab Home">NeuroPhys Lab</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../../index.html" class="nav-link">Home</a></li>
+                <li><a href="../../index.html#tutorials" class="nav-link">Tutorials</a></li>
+                <li><span class="nav-link-text" aria-current="page">Tutorial 1 - Concepts</span></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="tutorial-container" id="main-content">
+        <!-- Progress Bar -->
+        <section class="tutorial-progress" aria-label="Tutorial progress">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="progress-text">
+                <a href="intro.html" class="progress-step">Introduction</a>
+                <span class="progress-step active" aria-current="step">Concepts</span>
+                <a href="experiment.html" class="progress-step">Simulator</a>
+                <a href="questions.html" class="progress-step">Questions</a>
+            </div>
+        </section>
+
+        <!-- Concepts Content -->
+        <section class="tutorial-section concepts-section">
+            <h1>Equilibrium Potentials & the GHK Equation</h1>
+
+            <!-- Part 1: Concentration Gradients -->
+            <div class="concept-block">
+                <h2>Part 1: Ion Concentration Gradients</h2>
+                
+                <p>The cell membrane separates two very different ionic environments:</p>
+
+                <div class="ion-gradient-table">
+                    <table>
+                        <caption>Typical resting ion concentrations in vertebrate neurons</caption>
+                        <thead>
+                            <tr>
+                                <th>Ion</th>
+                                <th>Extracellular (mM)</th>
+                                <th>Intracellular (mM)</th>
+                                <th>Ratio (out/in)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>K⁺ (Potassium)</strong></td>
+                                <td>~5</td>
+                                <td>~140</td>
+                                <td>1:28 (low outside)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Na⁺ (Sodium)</strong></td>
+                                <td>~145</td>
+                                <td>~12</td>
+                                <td>12:1 (high outside)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cl⁻ (Chloride)</strong></td>
+                                <td>~110</td>
+                                <td>~4</td>
+                                <td>27:1 (high outside)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p><strong>Key insight:</strong> These gradients are maintained by the Na⁺/K⁺-ATPase pump, which uses energy to push Na⁺ out and K⁺ in.</p>
+            </div>
+
+            <!-- Part 2: Equilibrium Potentials -->
+            <div class="concept-block">
+                <h2>Part 2: Equilibrium Potentials (The Nernst Equation)</h2>
+
+                <p>If the membrane were permeable to only one ion, that ion would flow down its concentration gradient until an electrical gradient built up to oppose it. The voltage at which this happens is called the <strong>equilibrium potential</strong>.</p>
+
+                <div class="equation-box">
+                    <p class="equation">E<sub>ion</sub> = (61.5 mV / z) × log₁₀([ion]<sub>outside</sub> / [ion]<sub>inside</sub>)</p>
+                    <p class="note">Where z = charge of the ion (+1 for K⁺ and Na⁺, -1 for Cl⁻)</p>
+                </div>
+
+                <h3>Example: Equilibrium Potential for K⁺</h3>
+                <div class="calculation-box">
+                    <p>E<sub>K</sub> = (61.5 / 1) × log₁₀(5 / 140)</p>
+                    <p>E<sub>K</sub> = 61.5 × log₁₀(0.036)</p>
+                    <p>E<sub>K</sub> = 61.5 × (-1.44)</p>
+                    <p class="result">E<sub>K</sub> ≈ <strong>-89 mV</strong></p>
+                </div>
+
+                <p>This means that if the membrane were permeable <em>only</em> to K⁺, the membrane potential would settle at -89 mV.</p>
+
+                <h3>Physiological Equilibrium Potentials</h3>
+                <div class="equilibrium-potentials">
+                    <div class="eq-potential-card">
+                        <div class="eq-ion">K⁺</div>
+                        <div class="eq-value">≈ -89 mV</div>
+                        <p>Negative because K⁺ is more concentrated inside</p>
+                    </div>
+                    <div class="eq-potential-card">
+                        <div class="eq-ion">Na⁺</div>
+                        <div class="eq-value">≈ +60 mV</div>
+                        <p>Positive because Na⁺ is more concentrated outside</p>
+                    </div>
+                    <div class="eq-potential-card">
+                        <div class="eq-ion">Cl⁻</div>
+                        <div class="eq-value">≈ -70 mV</div>
+                        <p>Negative because Cl⁻ is more concentrated outside</p>
+                    </div>
+                </div>
+
+                <p><strong>Key insight:</strong> The actual resting membrane potential (~-70 mV) is <em>between</em> E<sub>K</sub> and E<sub>Na</sub> because the membrane is permeable to both ions (though more to K⁺).</p>
+            </div>
+
+            <!-- Part 3: GHK Equation -->
+            <div class="concept-block">
+                <h2>Part 3: The Goldman-Hodgkin-Katz (GHK) Equation</h2>
+
+                <p>Real cells are permeable to multiple ions at the same time. The GHK equation describes the membrane potential when several ions are present and the membrane is permeable to all of them:</p>
+
+                <div class="equation-box ghk-equation">
+                    <p class="equation">
+                        V<sub>m</sub> = (61.5 mV) × log₁₀ [ (P<sub>K</sub>[K⁺]<sub>out</sub> + P<sub>Na</sub>[Na⁺]<sub>out</sub> + P<sub>Cl</sub>[Cl⁻]<sub>in</sub>) / (P<sub>K</sub>[K⁺]<sub>in</sub> + P<sub>Na</sub>[Na⁺]<sub>in</sub> + P<sub>Cl</sub>[Cl⁻]<sub>out</sub>) ]
+                    </p>
+                    <p class="note"><strong>P<sub>ion</sub></strong> = permeability to that ion (0 to 1)</p>
+                </div>
+
+                <h3>Breaking Down the GHK Equation</h3>
+
+                <div class="ghk-breakdown">
+                    <div class="breakdown-item">
+                        

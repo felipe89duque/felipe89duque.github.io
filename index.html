@@ -3,71 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neurophysiology Learning Hub</title>
+    <title>Interactive Neurophysiology Learning Platform</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="container">
-            <h1 class="logo">Axon</h1>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="pages/basics.html">Basics</a></li>
-                <li><a href="pages/action-potential.html">Action Potential</a></li>
-                <li><a href="pages/synaptic-transmission.html">Synaptic Transmission</a></li>
-                <li><a href="pages/quiz.html">Quiz</a></li>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Axon</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="#tutorials" class="nav-link">Tutorials</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container">
-            <h1>Master Neurophysiology</h1>
-            <p>Interactive learning tools for understanding how neurons work</p>
-            <a href="pages/basics.html" class="btn btn-primary">Get Started</a>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Interactive Neurophysiology Learning Platform</h1>
+            <p>Master the fundamentals of nerve cell function through hands-on experiments and simulations</p>
+            <a href="tutorials/tutorial-1/experiment.html" class="btn btn-primary">Start Tutorial 1</a>
         </div>
-    </header>
+        <div class="hero-canvas">
+            <canvas id="neuronCanvas" width="400" height="300"></canvas>
+        </div>
+    </section>
 
-    <main>
-        <section class="features">
-            <div class="container">
-                <h2>What You'll Learn</h2>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h3>Neuron Structure</h3>
-                        <p>Understand the anatomy of neurons and their key components</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Action Potentials</h3>
-                        <p>See how electrical signals propagate through neurons</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Synaptic Transmission</h3>
-                        <p>Learn how neurons communicate with each other</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Interactive Simulations</h3>
-                        <p>Experiment with neural processes in real-time</p>
-                    </div>
+    <!-- Tutorials Section -->
+    <section id="tutorials" class="tutorials-section">
+        <h2>Available Tutorials</h2>
+        <div class="tutorials-grid">
+            <!-- Tutorial 1 -->
+            <div class="tutorial-card">
+                <div class="card-header">
+                    <h3>Tutorial 1</h3>
+                    <span class="badge badge-active">In Development</span>
                 </div>
+                <p><strong>Resting Membrane Potential & the GHK Equation</strong></p>
+                <p class="card-description">Learn how membrane permeability and ion concentration gradients determine the resting membrane potential through interactive experiments with a glial cell model.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">Equilibrium Potentials</span>
+                    <span class="topic-tag">GHK Equation</span>
+                    <span class="topic-tag">Ion Channels</span>
+                    <span class="topic-tag">Hyper/Hypokalemia</span>
+                </div>
+                <a href="tutorials/tutorial-1/experiment.html" class="btn btn-secondary btn-full">Enter Tutorial</a>
             </div>
-        </section>
 
-        <section class="interactive-demo">
-            <div class="container">
-                <h2>Quick Demo: Neuron at Rest</h2>
-                <canvas id="neuronCanvas" width="400" height="300"></canvas>
-                <p>This is a resting neuron with ion channels closed</p>
+            <!-- Tutorial 2 Placeholder -->
+            <div class="tutorial-card disabled">
+                <div class="card-header">
+                    <h3>Tutorial 2</h3>
+                    <span class="badge badge-coming">Coming Soon</span>
+                </div>
+                <p><strong>Action Potentials</strong></p>
+                <p class="card-description">Understand how sodium and potassium channels work together to generate action potentials.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">Voltage Gating</span>
+                    <span class="topic-tag">Ion Channels</span>
+                    <span class="topic-tag">Depolarization</span>
+                </div>
+                <button class="btn btn-secondary btn-full" disabled>Coming Soon</button>
             </div>
-        </section>
-    </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Neurophysiology. University of Oslo</p>
+            <!-- Tutorial 3 Placeholder -->
+            <div class="tutorial-card disabled">
+                <div class="card-header">
+                    <h3>Tutorial 3</h3>
+                    <span class="badge badge-coming">Coming Soon</span>
+                </div>
+                <p><strong>Synaptic Transmission</strong></p>
+                <p class="card-description">Explore how neurons communicate through chemical synapses and neurotransmitters.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">Neurotransmitters</span>
+                    <span class="topic-tag">Receptors</span>
+                    <span class="topic-tag">Synaptic Plasticity</span>
+                </div>
+                <button class="btn btn-secondary btn-full" disabled>Coming Soon</button>
+            </div>
+
+            <!-- Tutorial 4 Placeholder -->
+            <div class="tutorial-card disabled">
+                <div class="card-header">
+                    <h3>Tutorial 4</h3>
+                    <span class="badge badge-coming">Coming Soon</span>
+                </div>
+                <p><strong>Integration & Signal Processing</strong></p>
+                <p class="card-description">Learn how neurons integrate multiple inputs and generate complex signaling patterns.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">Summation</span>
+                    <span class="topic-tag">Threshold</span>
+                    <span class="topic-tag">Frequency Coding</span>
+                </div>
+                <button class="btn btn-secondary btn-full" disabled>Coming Soon</button>
+            </div>
         </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <h2>About This Platform</h2>
+        <p>This interactive learning platform is designed for students learning neurophysiology. Each tutorial combines conceptual explanations with hands-on simulations where you can manipulate ion concentrations, channel properties, and other variables to observe their effects on neural function.</p>
+        <p><strong>How to use:</strong> Work through the explanatory materials, then use the interactive experiments to test hypotheses about how different factors affect membrane potential and neural signaling.</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Interactive Neurophysiology Learning Platform. Institute of Basic Medical science, University of Oslo.</p>
     </footer>
 
+    <script src="js/modules/ghkCalculator.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
