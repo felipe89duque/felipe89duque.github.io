@@ -28,6 +28,8 @@ class Visualization {
             borderWidth: 3,
             tension: 0.3,
             fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 0,
             yAxisID: 'y'
           },
           {
@@ -38,6 +40,8 @@ class Visualization {
             borderWidth: 2,
             tension: 0.3,
             fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 0,
             yAxisID: 'y',
             borderDash: [5, 5]
           },
@@ -49,6 +53,8 @@ class Visualization {
             borderWidth: 2,
             tension: 0.3,
             fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 0,
             yAxisID: 'y',
             borderDash: [5, 5]
           },
@@ -60,6 +66,8 @@ class Visualization {
             borderWidth: 2,
             tension: 0.3,
             fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 0,
             yAxisID: 'y',
             borderDash: [5, 5]
           }
@@ -119,6 +127,11 @@ class Visualization {
     this.chart.data.datasets[2].data = history.ENa;
     this.chart.data.datasets[3].data = history.ECl;
     this.chart.update();
+  }
+
+  resizeChart() {
+    if (!this.chart) return;
+    this.chart.resize();
   }
 }
 

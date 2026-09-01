@@ -33,12 +33,15 @@ class SimulatorController {
     document.getElementById('reset-btn').addEventListener('click', () => this.reset());
     document.getElementById('clear-btn').addEventListener('click', () => this.clearHistory());
 
-    document.getElementById('toggle-calc').addEventListener('click', () => {
-      const content = document.getElementById('calc-content');
-      if (content) {
-        content.classList.toggle('calc-hidden');
-      }
-    });
+    const toggleCalc = document.getElementById('toggle-calc');
+    if (toggleCalc) {
+      toggleCalc.addEventListener('click', () => {
+        const content = document.getElementById('calc-content');
+        if (content) {
+          content.classList.toggle('calc-hidden');
+        }
+      });
+    }
 
     document.querySelectorAll('.guide-btn').forEach((btn) => {
       btn.addEventListener('click', (event) => {
@@ -191,10 +194,15 @@ class SimulatorController {
     const state = this.simulator.getState();
     const ions = state.ions;
 
-    document.getElementById('vm-display').textContent = state.Vm.toFixed(1);
-    document.getElementById('ek-display').textContent = state.EK.toFixed(1);
-    document.getElementById('ena-display').textContent = state.ENa.toFixed(1);
-    document.getElementById('ecl-display').textContent = state.ECl.toFixed(1);
+    const vmDisplay = document.getElementById('vm-display');
+    const ekDisplay = document.getElementById('ek-display');
+    const enaDisplay = document.getElementById('ena-display');
+    const eclDisplay = document.getElementById('ecl-display');
+    
+    if (vmDisplay) vmDisplay.textContent = state.Vm.toFixed(1);
+    if (ekDisplay) ekDisplay.textContent = state.EK.toFixed(1);
+    if (enaDisplay) enaDisplay.textContent = state.ENa.toFixed(1);
+    if (eclDisplay) eclDisplay.textContent = state.ECl.toFixed(1);
 
     const calcContent = document.getElementById('ghk-equation');
     const calcValues = document.getElementById('ghk-values');
@@ -237,4 +245,5 @@ class SimulatorController {
   }
 }
 
-new SimulatorController();
+// Make controller globally available
+window.simulatorController = new SimulatorController();

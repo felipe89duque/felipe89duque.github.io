@@ -23,56 +23,50 @@
         </div>
     </nav>
 
+    <!-- Tutorial Header -->
+    <section class="tutorial-header">
+        <div class="tutorial-header-container">
+            <p class="eyebrow">Tutorial 1</p>
+            <h1>Resting membrane potential</h1>
+        </div>
+    </section>
+
+    <!-- Quick Concepts Bar -->
+    <aside class="concept-sidebar-top" id="conceptSidebar" aria-label="Key concepts sidebar">
+        <div class="concept-sidebar-header">
+            <div class="concept-sidebar-content">
+                <p class="eyebrow">Quick concepts</p>
+                <h2>Membrane basics</h2>
+            </div>
+            <button id="conceptToggle" class="concept-toggle" type="button" aria-expanded="true" aria-controls="conceptPanel">Hide</button>
+        </div>
+
+        <div id="conceptPanel" class="concept-panel concept-panel-top">
+            <div class="concept-card">
+                <h3>1. Gradients</h3>
+                <p>K⁺ is high inside the cell, while Na⁺ and Cl⁻ are higher outside.</p>
+            </div>
+
+            <div class="concept-card">
+                <h3>2. Equilibrium</h3>
+                <p>Each ion has its own voltage where electrical and chemical forces balance.</p>
+            </div>
+
+            <div class="concept-card">
+                <h3>3. Permeability</h3>
+                <p>The membrane potential moves toward the ion that is most permeable.</p>
+            </div>
+        </div>
+    </aside>
+
     <!-- Main Content -->
-    <main class="tutorial-container tutorial-layout">
-        <aside class="concept-sidebar" id="conceptSidebar" aria-label="Key concepts sidebar">
-            <div class="concept-sidebar-header">
-                <div>
-                    <p class="eyebrow">Quick concepts</p>
-                    <h2>Membrane basics</h2>
-                </div>
-                <button id="conceptToggle" class="concept-toggle" type="button" aria-expanded="true" aria-controls="conceptPanel">Hide</button>
-            </div>
-
-            <div id="conceptPanel" class="concept-panel">
-                <div class="concept-card">
-                    <h3>1. Gradients</h3>
-                    <p>K⁺ is high inside the cell, while Na⁺ and Cl⁻ are higher outside.</p>
-                </div>
-
-                <div class="concept-card">
-                    <h3>2. Equilibrium</h3>
-                    <p>Each ion has its own voltage where electrical and chemical forces balance.</p>
-                </div>
-
-                <div class="concept-card">
-                    <h3>3. Permeability</h3>
-                    <p>The membrane potential moves toward the ion that is most permeable.</p>
-                </div>
-
-                <div class="formula-box">
-                    <p>Vm ≈ 61.5 × log10[(PK·Kout + PNa·Naout + PCl·Clin) / (PK·Kin + PNa·Nain + PCl·Clout)]</p>
-                </div>
-            </div>
-        </aside>
-
+    <main class="tutorial-container tutorial-layout tutorial-main">
         <section class="tutorial-section simulator-section">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">Tutorial 1</p>
-                    <h1>Resting membrane potential</h1>
+            <div class="parameter-panel">
+                <div class="parameter-bar-header">
+                    <h3>Parameters</h3>
                 </div>
-                <div class="quick-actions">
-                    <a href="intro.html" class="btn btn-outline small">Intro</a>
-                    <a href="questions.html" class="btn btn-primary small">Questions</a>
-                </div>
-            </div>
-
-            <p class="intro-text">
-                Pick a preset or move any slider. The membrane potential updates instantly as you change ion concentrations and permeability.
-            </p>
-
-            <div class="parameter-bar">
+                <div class="parameter-bar">
                 <div class="parameter-group">
                     <button class="group-toggle" type="button">Extracellular</button>
                     <div class="group-content">
@@ -172,93 +166,38 @@
                     </div>
                 </div>
             </div>
+            </div>
 
-            <div class="simulator-grid">
-                <div class="control-panel">
-                    <h2>Quick controls</h2>
+            <div class="chart-and-content">
+            <div class="simulator-content">
+                <div class="content-header">
+                    <p class="intro-text">
+                        Move any slider. The membrane potential updates instantly as you change ion concentrations and permeability.
+                    </p>
+                    <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
+                </div>
 
-                    <div class="control-group">
-                        <div class="condition-buttons">
-                            <button class="condition-btn active" data-condition="normal">Normal</button>
-                            <button class="condition-btn" data-condition="hyperkalemia">High K⁺</button>
-                            <button class="condition-btn" data-condition="hypokalemia">Low K⁺</button>
-                            <button class="condition-btn" data-condition="highNa">High Na⁺</button>
-                        </div>
-                    </div>
-
+                <div class="chart-container">
                     <div class="control-group compact-actions">
-                        <button id="reset-btn" class="btn btn-outline" style="width:100%;">Reset</button>
-                        <button id="clear-btn" class="btn btn-outline" style="width:100%; margin-top:8px;">Clear graph</button>
+                        <button id="reset-btn" class="btn btn-outline" style="width:30%;">Reset</button>
+                        <button id="clear-btn" class="btn btn-outline" style="width:30%; margin-top:8px;">Clear graph</button>
                     </div>
 
-                    <div class="calculation-display">
-                        <button id="toggle-calc" class="btn-toggle" type="button">Show GHK calculation</button>
-                        <div id="calc-content" class="calc-hidden">
-                            <div class="calculation-box">
-                                <p class="equation-label">GHK Equation</p>
-                                <p id="ghk-equation" class="equation">V<sub>m</sub> = 61.5 × log₁₀([numerator] / [denominator])</p>
-                                <p id="ghk-values" class="calc-values"></p>
-                            </div>
+                    <div class="chart-panel">
+                        <div class="chart-header">
+                            <h2>Resting potentials</h2>
+                            <div class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</div>
                         </div>
-                    </div>
-
-                    <div class="mini-summary">
-                        <div class="mini-stat">
-                            <span>Vm</span>
-                            <strong id="vm-display">-70.0 mV</strong>
-                        </div>
-                        <div class="mini-stat">
-                            <span>EK</span>
-                            <strong id="ek-display">-89.0 mV</strong>
-                        </div>
-                        <div class="mini-stat">
-                            <span>ENa</span>
-                            <strong id="ena-display">+60.0 mV</strong>
-                        </div>
-                        <div class="mini-stat">
-                            <span>ECl</span>
-                            <strong id="ecl-display">-70.0 mV</strong>
-                        </div>
+                        <canvas id="vmChart" width="400" height="300"></canvas>
                     </div>
                 </div>
-
-                <div class="chart-panel">
-                    <div class="chart-header">
-                        <h2>Real-time plot</h2>
-                        <div class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</div>
-                    </div>
-                    <canvas id="vmChart" width="400" height="300"></canvas>
                 </div>
-            </div>
-
-            <div class="exploration-guide">
-                <h2>Try these experiments</h2>
-                <p>Use the preset buttons or one of these quick challenges:</p>
-
-                <div class="guide-items">
-                    <div class="guide-item">
-                        <h4>Isolate K⁺</h4>
-                        <p>Set P<sub>Na</sub> and P<sub>Cl</sub> to 0, then increase K⁺ outside.</p>
-                        <button class="guide-btn" data-setup="isolateK" type="button">Try it</button>
-                    </div>
-
-                    <div class="guide-item">
-                        <h4>Isolate Na⁺</h4>
-                        <p>Set P<sub>K</sub> and P<sub>Cl</sub> to 0, then raise Na⁺ outside.</p>
-                        <button class="guide-btn" data-setup="isolateNa" type="button">Try it</button>
-                    </div>
-
-                    <div class="guide-item">
-                        <h4>Hyperkalemia</h4>
-                        <p>Increase K⁺ outside to 10 mM and watch the membrane move upward.</p>
-                        <button class="guide-btn" data-setup="hyperkalemia" type="button">Try it</button>
-                    </div>
-                </div>
-            </div>
 
             <div class="button-group">
-                <a href="intro.html" class="btn btn-outline">← Intro</a>
-                <a href="questions.html" class="btn btn-primary">Next: questions →</a>
+                <a href="../../index.html" class="btn btn-outline">← Home</a>
+                <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: tutorial →</a>
+            </div>
+            </div>
             </div>
         </section>
     </main>
@@ -276,14 +215,64 @@
     <script>
         const conceptSidebar = document.getElementById('conceptSidebar');
         const conceptToggle = document.getElementById('conceptToggle');
-        const tutorialLayout = document.querySelector('.tutorial-layout');
+        const expandChartBtn = document.getElementById('expandChartBtn');
+        const chartContainer = document.querySelector('.chart-container');
 
-        if (conceptSidebar && conceptToggle && tutorialLayout) {
+        // Position floating parameter windows
+        const parameterGroups = document.querySelectorAll('.parameter-group');
+        parameterGroups.forEach(group => {
+            const toggle = group.querySelector('.group-toggle');
+            const content = group.querySelector('.group-content');
+            
+            if (toggle && content) {
+                let hideTimeout;
+                
+                const showContent = () => {
+                    clearTimeout(hideTimeout);
+                    const rect = toggle.getBoundingClientRect();
+                    // Use viewport-relative coordinates for fixed positioning
+                    content.style.top = (rect.bottom + 8) + 'px';
+                    content.style.left = (rect.right + 8) + 'px';
+                    content.style.maxHeight = '600px';
+                    content.style.opacity = '1';
+                    content.style.pointerEvents = 'auto';
+                };
+                
+                const hideContent = () => {
+                    hideTimeout = setTimeout(() => {
+                        content.style.maxHeight = '0';
+                        content.style.opacity = '0';
+                        content.style.pointerEvents = 'none';
+                    }, 100);
+                };
+                
+                toggle.addEventListener('mouseenter', showContent);
+                toggle.addEventListener('mouseleave', hideContent);
+                content.addEventListener('mouseenter', showContent);
+                content.addEventListener('mouseleave', hideContent);
+            }
+        });
+
+        if (conceptSidebar && conceptToggle) {
             conceptToggle.addEventListener('click', () => {
                 const isCollapsed = conceptSidebar.classList.toggle('collapsed');
-                tutorialLayout.classList.toggle('sidebar-collapsed', isCollapsed);
                 conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
                 conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
+            });
+        }
+
+        if (expandChartBtn && chartContainer) {
+            expandChartBtn.addEventListener('click', () => {
+                chartContainer.classList.toggle('expanded');
+                document.body.classList.toggle('chart-expanded');
+                expandChartBtn.textContent = chartContainer.classList.contains('expanded') ? '✕' : '⛶';
+                
+                // Trigger chart resize after a brief delay to allow CSS to apply
+                setTimeout(() => {
+                    if (window.simulatorController && window.simulatorController.visualization) {
+                        window.simulatorController.visualization.resizeChart();
+                    }
+                }, 50);
             });
         }
     </script>

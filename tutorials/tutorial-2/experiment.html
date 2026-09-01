@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial 2: Action Potential Simulator</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../../index.html">Axon Lab</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../../index.html" class="nav-link">Home</a></li>
+                <li><a href="../../index.html#tutorials" class="nav-link">Tutorials</a></li>
+                <li><span class="nav-link-text">Tutorial 2 - Action Potential</span></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Tutorial Header -->
+    <section class="tutorial-header">
+        <div class="tutorial-header-container">
+            <p class="eyebrow">Tutorial 2</p>
+            <h1>Sodium action potential</h1>
+        </div>
+    </section>
+
+    <!-- Quick Concepts Bar -->
+    <aside class="concept-sidebar-top" id="conceptSidebar" aria-label="Key concepts sidebar">
+        <div class="concept-sidebar-header">
+            <div class="concept-sidebar-content">
+                <p class="eyebrow">Quick concepts</p>
+                <h2>Action potential dynamics</h2>
+            </div>
+            <button id="conceptToggle" class="concept-toggle" type="button" aria-expanded="true" aria-controls="conceptPanel">Hide</button>
+        </div>
+
+        <div id="conceptPanel" class="concept-panel concept-panel-top">
+            <div class="concept-card">
+                <h3>1. Depolarization</h3>
+                <p>Rapid influx of Na⁺ depolarizes the membrane toward E<sub>Na</sub>.</p>
+            </div>
+
+            <div class="concept-card">
+                <h3>2. Repolarization</h3>
+                <p>K⁺ outflow repolarizes the membrane back toward E<sub>K</sub>.</p>
+            </div>
+
+            <div class="concept-card">
+                <h3>3. Refractory Period</h3>
+                <p>Absolute: Na⁺ channel inactivation. Relative: K⁺ hyperpolarization.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="tutorial-container tutorial-layout tutorial-main">
+        <section class="tutorial-section simulator-section">
+            <div class="parameter-panel">
+                <div class="parameter-bar-header">
+                    <h3>Parameters</h3>
+                </div>
+                <div class="parameter-bar">
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Extracellular</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="kOut">K⁺ out <span id="kOut-value">5</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="kOut" class="slider" min="0.5" max="20" step="0.5" value="5">
+                                <input type="number" id="kOut-input" class="numeric-input" min="0.5" max="20" step="0.5" value="5">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="naOut">Na⁺ out <span id="naOut-value">145</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="naOut" class="slider" min="80" max="200" step="5" value="145">
+                                <input type="number" id="naOut-input" class="numeric-input" min="80" max="200" step="5" value="145">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="clOut">Cl⁻ out <span id="clOut-value">110</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="clOut" class="slider" min="50" max="150" step="5" value="110">
+                                <input type="number" id="clOut-input" class="numeric-input" min="50" max="150" step="5" value="110">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Intracellular</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="kIn">K⁺ in <span id="kIn-value">140</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="kIn" class="slider" min="80" max="160" step="5" value="140">
+                                <input type="number" id="kIn-input" class="numeric-input" min="80" max="160" step="5" value="140">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="naIn">Na⁺ in <span id="naIn-value">12</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="naIn" class="slider" min="5" max="50" step="1" value="12">
+                                <input type="number" id="naIn-input" class="numeric-input" min="5" max="50" step="1" value="12">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="clIn">Cl⁻ in <span id="clIn-value">4</span> mM</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="clIn" class="slider" min="1" max="20" step="1" value="4">
+                                <input type="number" id="clIn-input" class="numeric-input" min="1" max="20" step="1" value="4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Channel conductances</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="gNa">g<sub>Na</sub> <span id="gNa-value">120</span> mS/cm²</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="gNa" class="slider" min="0" max="200" step="10" value="120">
+                                <input type="number" id="gNa-input" class="numeric-input" min="0" max="200" step="10" value="120">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="gK">g<sub>K</sub> <span id="gK-value">36</span> mS/cm²</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="gK" class="slider" min="0" max="100" step="5" value="36">
+                                <input type="number" id="gK-input" class="numeric-input" min="0" max="100" step="5" value="36">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="gL">g<sub>L</sub> <span id="gL-value">0.3</span> mS/cm²</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="gL" class="slider" min="0.1" max="1" step="0.1" value="0.3">
+                                <input type="number" id="gL-input" class="numeric-input" min="0.1" max="1" step="0.1" value="0.3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <button class="group-toggle" type="button">Stimulation</button>
+                    <div class="group-content">
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="stimAmplitude">Amplitude <span id="stimAmplitude-value">10</span> µA/cm²</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="stimAmplitude" class="slider" min="0" max="100" step="5" value="10">
+                                <input type="number" id="stimAmplitude-input" class="numeric-input" min="0" max="100" step="5" value="10">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="stimStart">Start <span id="stimStart-value">5</span> ms</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="stimStart" class="slider" min="0" max="50" step="0.5" value="5">
+                                <input type="number" id="stimStart-input" class="numeric-input" min="0" max="50" step="0.5" value="5">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="stimDuration">Duration <span id="stimDuration-value">1</span> ms</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="stimDuration" class="slider" min="0.1" max="10" step="0.1" value="1">
+                                <input type="number" id="stimDuration-input" class="numeric-input" min="0.1" max="10" step="0.1" value="1">
+                            </div>
+                        </div>
+                        <div class="parameter-block">
+                            <div class="parameter-summary">
+                                <label for="totalTime">Total time <span id="totalTime-value">20</span> ms</label>
+                            </div>
+                            <div class="parameter-details">
+                                <input type="range" id="totalTime" class="slider" min="10" max="500" step="10" value="20">
+                                <input type="number" id="totalTime-input" class="numeric-input" min="10" max="500" step="10" value="20">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="chart-and-content">
+            <div class="simulator-content">
+                <div class="content-header">
+                    <p class="intro-text">
+                        Adjust channel conductances or ion concentrations to observe how they affect the action potential waveform and refractory period.
+                    </p>
+                    <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
+                </div>
+
+                <div class="chart-container">
+                    <div class="control-group compact-actions">
+                        <button id="run-btn" class="btn btn-primary">Run simulation</button>
+                        <button id="reset-btn" class="btn btn-outline">Reset</button>
+                        <button id="clear-btn" class="btn btn-outline">Clear</button>
+                    </div>
+
+                    <div class="chart-panel" style="height: 400px; margin-bottom: 16px;">
+                        <canvas id="vmChart" width="400" height="300"></canvas>
+                    </div>
+
+                    <div class="chart-panel" style="height: 400px; margin-bottom: 16px;">
+                        <canvas id="currentChart" width="400" height="300"></canvas>
+                    </div>
+
+                    <div class="chart-panel" style="height: 400px;">
+                        <canvas id="drivingForceChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                </div>
+
+            <div class="button-group">
+                <a href="../../index.html" class="btn btn-outline">← Home</a>
+                <a href="../../index.html#tutorials" class="btn btn-primary">Back to Tutorials</a>
+            </div>
+            </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Interactive Neurophysiology Learning Platform. For educational purposes.</p>
+    </footer>
+
+    <!-- Script Imports -->
+    <script src="../../js/modules/hodgkinHuxleySimulator.js"></script>
+    <script src="../../js/modules/hhVisualization.js"></script>
+    <script>
+        // Initialize simulator and visualization
+        const simulator = new HodgkinHuxleySimulator();
+        const visualization = new HodgkinHuxleyVisualization('vmChart', 'currentChart', 'drivingForceChart');
+
+        // Parameter input handlers
+        function setupParameterListeners() {
+            // Extracellular Na+
+            const naOutEl = document.getElementById('naOut');
+            const naOutInput = document.getElementById('naOut-input');
+            if (naOutEl && naOutInput) {
+                naOutEl.addEventListener('input', (e) => {
+                    naOutInput.value = e.target.value;
+                    document.getElementById('naOut-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+                naOutInput.addEventListener('input', (e) => {
+                    naOutEl.value = e.target.value;
+                    document.getElementById('naOut-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+            }
+
+            // Intracellular Na+
+            const naInEl = document.getElementById('naIn');
+            const naInInput = document.getElementById('naIn-input');
+            if (naInEl && naInInput) {
+                naInEl.addEventListener('input', (e) => {
+                    naInInput.value = e.target.value;
+                    document.getElementById('naIn-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(e.target.value)
+                    );
+                });
+                naInInput.addEventListener('input', (e) => {
+                    naInEl.value = e.target.value;
+                    document.getElementById('naIn-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(e.target.value)
+                    );
+                });
+            }
+
+            // Extracellular K+
+            const kOutEl = document.getElementById('kOut');
+            const kOutInput = document.getElementById('kOut-input');
+            if (kOutEl && kOutInput) {
+                kOutEl.addEventListener('input', (e) => {
+                    kOutInput.value = e.target.value;
+                    document.getElementById('kOut-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+                kOutInput.addEventListener('input', (e) => {
+                    kOutEl.value = e.target.value;
+                    document.getElementById('kOut-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('kIn').value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+            }
+
+            // Intracellular K+
+            const kInEl = document.getElementById('kIn');
+            const kInInput = document.getElementById('kIn-input');
+            if (kInEl && kInInput) {
+                kInEl.addEventListener('input', (e) => {
+                    kInInput.value = e.target.value;
+                    document.getElementById('kIn-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+                kInInput.addEventListener('input', (e) => {
+                    kInEl.value = e.target.value;
+                    document.getElementById('kIn-value').textContent = e.target.value;
+                    simulator.setConcentrations(
+                        parseFloat(document.getElementById('kOut').value),
+                        parseFloat(e.target.value),
+                        parseFloat(document.getElementById('naOut').value),
+                        parseFloat(document.getElementById('naIn').value)
+                    );
+                });
+            }
+
+            // Channel conductances
+            ['gNa', 'gK', 'gL'].forEach(paramName => {
+                const el = document.getElementById(paramName);
+                const input = document.getElementById(paramName + '-input');
+                if (el && input) {
+                    const updateFunc = () => {
+                        simulator.setConductances(
+                            parseFloat(document.getElementById('gNa').value),
+                            parseFloat(document.getElementById('gK').value),
+                            parseFloat(document.getElementById('gL').value)
+                        );
+                    };
+                    el.addEventListener('input', (e) => {
+                        input.value = e.target.value;
+                        document.getElementById(paramName + '-value').textContent = e.target.value;
+                        updateFunc();
+                    });
+                    input.addEventListener('input', (e) => {
+                        el.value = e.target.value;
+                        document.getElementById(paramName + '-value').textContent = e.target.value;
+                        updateFunc();
+                    });
+                }
+            });
+
+            // Stimulation parameters
+            ['stimAmplitude', 'stimStart', 'stimDuration'].forEach(paramName => {
+                const el = document.getElementById(paramName);
+                const input = document.getElementById(paramName + '-input');
+                if (el && input) {
+                    const updateFunc = () => {
+                        simulator.setStimulation(
+                            parseFloat(document.getElementById('stimAmplitude').value),
+                            parseFloat(document.getElementById('stimStart').value),
+                            parseFloat(document.getElementById('stimDuration').value)
+                        );
+                    };
+                    el.addEventListener('input', (e) => {
+                        input.value = e.target.value;
+                        document.getElementById(paramName + '-value').textContent = e.target.value;
+                        updateFunc();
+                    });
+                    input.addEventListener('input', (e) => {
+                        el.value = e.target.value;
+                        document.getElementById(paramName + '-value').textContent = e.target.value;
+                        updateFunc();
+                    });
+                }
+            });
+
+            // Total time
+            const totalTimeEl = document.getElementById('totalTime');
+            const totalTimeInput = document.getElementById('totalTime-input');
+            if (totalTimeEl && totalTimeInput) {
+                totalTimeEl.addEventListener('input', (e) => {
+                    totalTimeInput.value = e.target.value;
+                    document.getElementById('totalTime-value').textContent = e.target.value;
+                    simulator.setTotalTime(parseFloat(e.target.value));
+                });
+                totalTimeInput.addEventListener('input', (e) => {
+                    totalTimeEl.value = e.target.value;
+                    document.getElementById('totalTime-value').textContent = e.target.value;
+                    simulator.setTotalTime(parseFloat(e.target.value));
+                });
+            }
+        }
+
+        // Button handlers
+        const runBtn = document.getElementById('run-btn');
+        if (runBtn) {
+            runBtn.addEventListener('click', () => {
+                simulator.run();
+                visualization.updateCharts(simulator.history);
+            });
+        }
+
+        const resetBtn = document.getElementById('reset-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                simulator.reset();
+                visualization.clearCharts();
+                // Reset parameters to defaults
+                const defaults = {
+                    kOut: 5,
+                    kIn: 140,
+                    naOut: 145,
+                    naIn: 12,
+                    clOut: 110,
+                    clIn: 4,
+                    gNa: 120,
+                    gK: 36,
+                    gL: 0.3,
+                    stimAmplitude: 10,
+                    stimStart: 5,
+                    stimDuration: 1,
+                    totalTime: 20
+                };
+                
+                // Reset slider and input fields
+                Object.entries(defaults).forEach(([key, value]) => {
+                    const slider = document.getElementById(key);
+                    const input = document.getElementById(key + '-input');
+                    const valueDisplay = document.getElementById(key + '-value');
+                    
+                    if (slider) slider.value = value;
+                    if (input) input.value = value;
+                    if (valueDisplay) valueDisplay.textContent = value;
+                });
+                
+                // Update simulator with default parameters
+                simulator.setConcentrations(5, 140, 145, 12);
+                simulator.setConductances(120, 36, 0.3);
+                simulator.setStimulation(10, 5, 1);
+                simulator.setTotalTime(20);
+            });
+        }
+
+        const clearBtn = document.getElementById('clear-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                simulator.reset();
+                visualization.clearCharts();
+            });
+        }
+
+        // Floating parameter windows
+        const parameterGroups = document.querySelectorAll('.parameter-group');
+        parameterGroups.forEach(group => {
+            const toggle = group.querySelector('.group-toggle');
+            const content = group.querySelector('.group-content');
+            
+            if (toggle && content) {
+                let hideTimeout;
+                
+                const showContent = () => {
+                    clearTimeout(hideTimeout);
+                    const rect = toggle.getBoundingClientRect();
+                    content.style.top = (rect.bottom + 8) + 'px';
+                    content.style.left = (rect.right + 8) + 'px';
+                    content.style.maxHeight = '600px';
+                    content.style.opacity = '1';
+                    content.style.pointerEvents = 'auto';
+                };
+                
+                const hideContent = () => {
+                    hideTimeout = setTimeout(() => {
+                        content.style.maxHeight = '0';
+                        content.style.opacity = '0';
+                        content.style.pointerEvents = 'none';
+                    }, 100);
+                };
+                
+                toggle.addEventListener('mouseenter', showContent);
+                toggle.addEventListener('mouseleave', hideContent);
+                content.addEventListener('mouseenter', showContent);
+                content.addEventListener('mouseleave', hideContent);
+            }
+        });
+
+        // Concept sidebar toggle
+        const conceptSidebar = document.getElementById('conceptSidebar');
+        const conceptToggle = document.getElementById('conceptToggle');
+        if (conceptSidebar && conceptToggle) {
+            conceptToggle.addEventListener('click', () => {
+                const isCollapsed = conceptSidebar.classList.toggle('collapsed');
+                conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
+                conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
+            });
+        }
+
+        // Expand button for charts
+        const expandChartBtn = document.getElementById('expandChartBtn');
+        const chartContainer = document.querySelector('.chart-container');
+        if (expandChartBtn && chartContainer) {
+            expandChartBtn.addEventListener('click', () => {
+                chartContainer.classList.toggle('expanded');
+                document.body.classList.toggle('chart-expanded');
+                expandChartBtn.textContent = chartContainer.classList.contains('expanded') ? '✕' : '⛶';
+                
+                // Trigger chart resize after a brief delay to allow CSS to apply
+                setTimeout(() => {
+                    if (visualization && visualization.vmChart) {
+                        visualization.vmChart.resize();
+                    }
+                    if (visualization && visualization.currentChart) {
+                        visualization.currentChart.resize();
+                    }
+                    if (visualization && visualization.drivingForceChart) {
+                        visualization.drivingForceChart.resize();
+                    }
+                }, 50);
+            });
+        }
+
+        // Initialize parameter listeners on page load
+        setupParameterListeners();
+    </script>
+</body>
+</html>
