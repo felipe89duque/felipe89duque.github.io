@@ -216,7 +216,10 @@
                     <p class="intro-text">
                         Adjust channel conductances or ion concentrations to observe how they affect the action potential waveform and refractory period.
                     </p>
-                    <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
+                    <div class="chart-actions">
+                        <button class="btn-icon" id="lockLinesBtn" type="button" title="Lock plotted lines" aria-label="Lock plotted lines" aria-pressed="false">&#128274;</button>
+                        <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
+                    </div>
                 </div>
 
                 <div class="chart-container">
@@ -242,7 +245,7 @@
 
             <div class="button-group">
                 <a href="../../index.html" class="btn btn-outline">← Home</a>
-                <a href="../../index.html#tutorials" class="btn btn-primary">Back to Tutorials</a>
+                <a href="../tutorial-3/experiment.html" class="btn btn-primary">Next: tutorial →</a>
             </div>
             </div>
             </div>
@@ -540,6 +543,17 @@
         // Expand button for charts
         const expandChartBtn = document.getElementById('expandChartBtn');
         const chartContainer = document.querySelector('.chart-container');
+        const lockLinesBtn = document.getElementById('lockLinesBtn');
+        if (lockLinesBtn) {
+            lockLinesBtn.addEventListener('click', () => {
+                const locked = visualization.toggleLineLock();
+                lockLinesBtn.setAttribute('aria-pressed', String(locked));
+                lockLinesBtn.title = locked ? 'Unlock plotted lines' : 'Lock plotted lines';
+                lockLinesBtn.setAttribute('aria-label', lockLinesBtn.title);
+                lockLinesBtn.innerHTML = locked ? '&#128275;' : '&#128274;';
+                lockLinesBtn.classList.toggle('active', locked);
+            });
+        }
         if (expandChartBtn && chartContainer) {
             expandChartBtn.addEventListener('click', () => {
                 chartContainer.classList.toggle('expanded');

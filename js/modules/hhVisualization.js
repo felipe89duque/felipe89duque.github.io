@@ -12,6 +12,8 @@ class HodgkinHuxleyVisualization {
     this.currentCanvasId = currentCanvasId;
     this.drivingForceCanvasId = drivingForceCanvasId;
 
+    this.linesLocked = false;
+    this.runNumber = 0;
     this.initializeCharts();
   }
 
@@ -262,38 +264,71 @@ class HodgkinHuxleyVisualization {
       return;
     }
 
+    this.runNumber += 1;
+    [this.vmChart, this.currentChart, this.drivingForceChart].forEach(chart => this.prepareChartForRun(chart));
+
     // Update Vm + Stimulus chart
     if (this.vmChart) {
       this.vmChart.data.labels = history.timestamps;
-      this.vmChart.data.datasets[0].data = history.Vm;
-      this.vmChart.data.datasets[1].data = history.stimCurrent;
+      this.setCurrentRunData(this.vmChart, [history.Vm, history.stimCurrent]);
       this.vmChart.update('none'); // 'none' avoids animation for performance
     }
 
     // Update currents chart
     if (this.currentChart) {
       this.currentChart.data.labels = history.timestamps;
-      this.currentChart.data.datasets[0].data = history.INa;
-      this.currentChart.data.datasets[1].data = history.IK;
-      this.currentChart.data.datasets[2].data = history.IL;
+      this.setCurrentRunData(this.currentChart, [history.INa, history.IK, history.IL]);
       this.currentChart.update('none');
     }
 
     // Update driving forces chart
     if (this.drivingForceChart) {
       this.drivingForceChart.data.labels = history.timestamps;
-      this.drivingForceChart.data.datasets[0].data = history.VNa;
-      this.drivingForceChart.data.datasets[1].data = history.VK;
+      this.setCurrentRunData(this.drivingForceChart, [history.VNa, history.VK]);
       this.drivingForceChart.update('none');
     }
   }
 
+  prepareChartForRun(chart) {
+    if (!chart) return;
+    chart.data.datasets.forEach(dataset => {
+      if (typeof dataset.currentRun !== 'boolean') dataset.currentRun = true;
+    });
+    if (!this.linesLocked || this.runNumber === 1) return;
+
+    const currentDatasets = chart.data.datasets.filter(dataset => dataset.currentRun);
+    currentDatasets.forEach(dataset => {
+      chart.data.datasets.push({
+        ...dataset,
+        label: `${dataset.baseLabel || dataset.label} (Run ${this.runNumber - 1})`,
+        borderDash: [6, 4],
+        borderWidth: Math.max(1, (dataset.borderWidth || 2) - 0.5),
+        currentRun: false,
+        data: [...dataset.data]
+      });
+    });
+  }
+
+  setCurrentRunData(chart, values) {
+    const currentDatasets = chart.data.datasets.filter(dataset => dataset.currentRun);
+    currentDatasets.forEach((dataset, index) => {
+      dataset.baseLabel = dataset.baseLabel || dataset.label;
+      dataset.label = this.linesLocked ? `${dataset.baseLabel} (Run ${this.runNumber})` : dataset.baseLabel;
+      dataset.data = values[index];
+    });
+  }
+
+  toggleLineLock() {
+    this.linesLocked = !this.linesLocked;
+    return this.linesLocked;
+  }
   /**
    * Clear all charts
    */
   clearCharts() {
     if (this.vmChart) {
       this.vmChart.data.labels = [];
+      this.vmChart.data.datasets = this.vmChart.data.datasets.filter(dataset => dataset.currentRun !== false);
       this.vmChart.data.datasets.forEach(dataset => {
         dataset.data = [];
       });
@@ -302,6 +337,7 @@ class HodgkinHuxleyVisualization {
 
     if (this.currentChart) {
       this.currentChart.data.labels = [];
+      this.currentChart.data.datasets = this.currentChart.data.datasets.filter(dataset => dataset.currentRun !== false);
       this.currentChart.data.datasets.forEach(dataset => {
         dataset.data = [];
       });
@@ -310,11 +346,13 @@ class HodgkinHuxleyVisualization {
 
     if (this.drivingForceChart) {
       this.drivingForceChart.data.labels = [];
+      this.drivingForceChart.data.datasets = this.drivingForceChart.data.datasets.filter(dataset => dataset.currentRun !== false);
       this.drivingForceChart.data.datasets.forEach(dataset => {
         dataset.data = [];
       });
       this.drivingForceChart.update('none');
     }
+    this.runNumber = 0;
   }
 
   /**
