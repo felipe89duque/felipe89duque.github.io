@@ -86,9 +86,9 @@
                         <div class="chart-panel"><canvas id="voltageSpaceTimeChart"></canvas></div>
                     </div>
                 </div>
-                <div class="button-group"><a href="../../index.html" class="btn btn-outline">&#8592; Home</a><a href="../tutorial-2/experiment.html" class="btn btn-outline">&#8592; Tutorial 2</a><a href="../../index.html#tutorials" class="btn btn-primary">All tutorials</a></div>
             </div>
         </section>
+        <div class="button-group tutorial-footer-actions"><a href="../../index.html" class="btn btn-outline">&#8592; Home</a><a href="../tutorial-2/experiment.html" class="btn btn-outline">&#8592; Tutorial 2</a><a href="../../index.html#tutorials" class="btn btn-primary">All tutorials</a></div>
     </main>
 
     <footer class="footer"><p>&copy; 2026 Interactive Neurophysiology Learning Platform. For educational purposes.</p></footer>
@@ -98,6 +98,7 @@
     <script>
         const simulator = new PassiveAxonSimulator();
         const visualization = new PassiveAxonVisualization('voltageTimeChart', 'voltageSpaceChart');
+        window.visualization = visualization;
         const defaults = { membraneResistance: 10000, diameter: 20, capacitance: 1, stimulusAmplitude: 10, stimulusStart: 0, stimulusDuration: 20, totalTime: 20 };
         const parameterNames = Object.keys(defaults);
         const positionOutput = document.getElementById('electrode-position');
@@ -185,7 +186,14 @@
             chartContainer.classList.toggle('expanded');
             document.body.classList.toggle('chart-expanded');
             event.currentTarget.innerHTML = chartContainer.classList.contains('expanded') ? '&#x2715;' : '&#x26F6;';
-            setTimeout(() => visualization.resize(), 50);
+            setTimeout(() => {
+                visualization.resize();
+                const chart = document.querySelector('.chart-panel canvas');
+                if (chart && chart.chart) {
+                    chart.chart.resize();
+                    chart.chart.update('none');
+                }
+            }, 50);
         });
 
         const lockLinesBtn = document.getElementById('lockLinesBtn');
@@ -209,10 +217,46 @@
         document.querySelectorAll('.parameter-group').forEach(group => {
             const toggle = group.querySelector('.group-toggle');
             const content = group.querySelector('.group-content');
-            let hideTimeout;
-            const show = () => { clearTimeout(hideTimeout); const rect = toggle.getBoundingClientRect(); content.style.top = `${rect.bottom + 8}px`; content.style.left = `${rect.right + 8}px`; content.style.maxHeight = '700px'; content.style.opacity = '1'; content.style.pointerEvents = 'auto'; };
-            const hide = () => { hideTimeout = setTimeout(() => { content.style.maxHeight = '0'; content.style.opacity = '0'; content.style.pointerEvents = 'none'; }, 100); };
-            toggle.addEventListener('mouseenter', show); toggle.addEventListener('mouseleave', hide); content.addEventListener('mouseenter', show); content.addEventListener('mouseleave', hide);
+            group.__hoverOpen = false;
+            group.__pinnedOpen = false;
+            const setExpanded = isExpanded => {
+                group.classList.toggle('is-open', isExpanded);
+                toggle.setAttribute('aria-expanded', String(isExpanded));
+                content.style.maxHeight = isExpanded ? '700px' : '0';
+                content.style.opacity = isExpanded ? '1' : '0';
+                content.style.pointerEvents = isExpanded ? 'auto' : 'none';
+            };
+            const syncState = () => {
+                setExpanded(group.__pinnedOpen || group.__hoverOpen || toggle.matches(':focus'));
+            };
+            toggle.addEventListener('click', event => {
+                event.stopPropagation();
+                group.__pinnedOpen = !group.__pinnedOpen;
+                syncState();
+            });
+            group.addEventListener('mouseenter', () => { group.__hoverOpen = true; syncState(); });
+            group.addEventListener('mouseleave', () => { group.__hoverOpen = false; if (!group.__pinnedOpen) syncState(); });
+            toggle.addEventListener('focus', () => { group.__hoverOpen = true; syncState(); });
+            toggle.addEventListener('blur', () => { group.__hoverOpen = false; if (!group.__pinnedOpen) syncState(); });
+            content.addEventListener('mouseenter', () => { group.__hoverOpen = true; syncState(); });
+            content.addEventListener('mouseleave', () => { group.__hoverOpen = false; if (!group.__pinnedOpen) syncState(); });
+        });
+
+        document.addEventListener('click', event => {
+            document.querySelectorAll('.parameter-group').forEach(group => {
+                const toggle = group.querySelector('.group-toggle');
+                const content = group.querySelector('.group-content');
+                if (!toggle || !content) return;
+                if (!group.contains(event.target)) {
+                    group.__hoverOpen = false;
+                    group.__pinnedOpen = false;
+                    group.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                    content.style.pointerEvents = 'none';
+                }
+            });
         });
 
         setElectrodePosition(0);

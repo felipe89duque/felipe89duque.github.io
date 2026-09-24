@@ -30,9 +30,6 @@
             <p>Master the fundamentals of nerve cell function through hands-on experiments and simulations</p>
             <a href="tutorials/tutorial-1/experiment.html" class="btn btn-primary">Start Tutorial 1</a>
         </div>
-        <div class="hero-canvas">
-            <canvas id="neuronCanvas" width="400" height="300"></canvas>
-        </div>
     </section>
 
     <!-- Tutorials Section -->
@@ -40,10 +37,9 @@
         <h2>Available Tutorials</h2>
         <div class="tutorials-grid">
             <!-- Tutorial 1 -->
-            <div class="tutorial-card">
+            <a href="tutorials/tutorial-1/experiment.html" class="tutorial-card tutorial-card-link">
                 <div class="card-header">
                     <h3>Tutorial 1</h3>
-                    <span class="badge badge-active">In Development</span>
                 </div>
                 <p><strong>Resting Membrane Potential & the GHK Equation</strong></p>
                 <p class="card-description">Learn how membrane permeability and ion concentration gradients determine the resting membrane potential through interactive experiments with a glial cell model.</p>
@@ -53,14 +49,12 @@
                     <span class="topic-tag">Ion Channels</span>
                     <span class="topic-tag">Hyper/Hypokalemia</span>
                 </div>
-                <a href="tutorials/tutorial-1/experiment.html" class="btn btn-secondary btn-full">Enter Tutorial</a>
-            </div>
+            </a>
 
             <!-- Tutorial 2 -->
-            <div class="tutorial-card">
+            <a href="tutorials/tutorial-2/experiment.html" class="tutorial-card tutorial-card-link">
                 <div class="card-header">
                     <h3>Tutorial 2</h3>
-                    <span class="badge badge-active">In Development</span>
                 </div>
                 <p><strong>Action Potentials</strong></p>
                 <p class="card-description">Understand how sodium and potassium channels work together to generate action potentials using the Hodgkin-Huxley model.</p>
@@ -70,14 +64,12 @@
                     <span class="topic-tag">Depolarization</span>
                     <span class="topic-tag">Repolarization</span>
                 </div>
-                <a href="tutorials/tutorial-2/experiment.html" class="btn btn-secondary btn-full">Enter Tutorial</a>
-            </div>
+            </a>
 
             <!-- Tutorial 3 -->
-            <div class="tutorial-card">
+            <a href="tutorials/tutorial-3/experiment.html" class="tutorial-card tutorial-card-link">
                 <div class="card-header">
                     <h3>Tutorial 3</h3>
-                    <span class="badge badge-active">Interactive</span>
                 </div>
                 <p><strong>Passive spread along an axon</strong></p>
                 <p class="card-description">Measure the length constant and explore how membrane resistance, diameter, capacitance, and electrode position shape passive voltage spread.</p>
@@ -86,8 +78,7 @@
                     <span class="topic-tag">Cable Properties</span>
                     <span class="topic-tag">Sealed Ends</span>
                 </div>
-                <a href="tutorials/tutorial-3/experiment.html" class="btn btn-secondary btn-full">Enter Tutorial</a>
-            </div>
+            </a>
 
             <!-- Tutorial 4 Placeholder -->
             <div class="tutorial-card disabled">
@@ -111,12 +102,12 @@
     <section id="about" class="about-section">
         <h2>About This Platform</h2>
         <p>This interactive learning platform is designed for students learning neurophysiology. Each tutorial combines conceptual explanations with hands-on simulations where you can manipulate ion concentrations, channel properties, and other variables to observe their effects on neural function.</p>
-        <p><strong>How to use:</strong> Work through the explanatory materials, then use the interactive experiments to test hypotheses about how different factors affect membrane potential and neural signaling.</p>
+        <!-- <p><strong>How to use:</strong> Work through the explanatory materials, then use the interactive experiments to test hypotheses about how different factors affect membrane potential and neural signaling.</p> -->
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2026 Interactive Neurophysiology Learning Platform. Institute of Basic Medical science, University of Oslo.</p>
+        <p>&copy; 2026 Axon. Institute of Basic Medical science, University of Oslo.</p>
     </footer>
 
     <script src="js/modules/ghkCalculator.js"></script>

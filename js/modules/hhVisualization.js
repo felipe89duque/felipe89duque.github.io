@@ -64,13 +64,26 @@ class HodgkinHuxleyVisualization {
           },
           plugins: {
             title: {
-              display: true,
+              display: false,
               text: 'Action Potential & Stimulus',
               font: { size: 14, weight: 'bold' }
             },
             legend: {
               display: true,
-              position: 'top'
+              position: 'top',
+              labels: {
+                generateLabels(chart) {
+                  const seen = new Set();
+                  return Chart.defaults.plugins.legend.labels.generateLabels(chart).filter(item => {
+                    const dataset = chart.data.datasets[item.datasetIndex];
+                    if (!dataset || dataset.showInLegend === false) return false;
+                    const key = dataset.baseLabel || dataset.label || `dataset-${item.datasetIndex}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                  });
+                }
+              }
             }
           },
           scales: {
@@ -156,13 +169,26 @@ class HodgkinHuxleyVisualization {
           },
           plugins: {
             title: {
-              display: true,
+              display: false,
               text: 'Ionic Currents',
               font: { size: 14, weight: 'bold' }
             },
             legend: {
               display: true,
-              position: 'top'
+              position: 'top',
+              labels: {
+                generateLabels(chart) {
+                  const seen = new Set();
+                  return Chart.defaults.plugins.legend.labels.generateLabels(chart).filter(item => {
+                    const dataset = chart.data.datasets[item.datasetIndex];
+                    if (!dataset || dataset.showInLegend === false) return false;
+                    const key = dataset.baseLabel || dataset.label || `dataset-${item.datasetIndex}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                  });
+                }
+              }
             }
           },
           scales: {
@@ -225,13 +251,26 @@ class HodgkinHuxleyVisualization {
           },
           plugins: {
             title: {
-              display: true,
+              display: false,
               text: 'Ion Driving Forces',
               font: { size: 14, weight: 'bold' }
             },
             legend: {
               display: true,
-              position: 'top'
+              position: 'top',
+              labels: {
+                generateLabels(chart) {
+                  const seen = new Set();
+                  return Chart.defaults.plugins.legend.labels.generateLabels(chart).filter(item => {
+                    const dataset = chart.data.datasets[item.datasetIndex];
+                    if (!dataset || dataset.showInLegend === false) return false;
+                    const key = dataset.baseLabel || dataset.label || `dataset-${item.datasetIndex}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                  });
+                }
+              }
             }
           },
           scales: {
@@ -289,10 +328,28 @@ class HodgkinHuxleyVisualization {
     }
   }
 
+  applyExpandedLayout(chart) {
+    if (!chart || !chart.options || !chart.options.plugins) return;
+    const expanded = document.body.classList.contains('chart-expanded');
+
+    if (chart.options.plugins.legend) {
+      chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+      chart.options.plugins.legend.align = 'center';
+    }
+
+    if (chart.options.plugins.title) {
+      chart.options.plugins.title.display = true;
+      chart.options.plugins.title.position = expanded ? 'left' : 'top';
+    }
+
+    chart.update('none');
+  }
+
   prepareChartForRun(chart) {
     if (!chart) return;
     chart.data.datasets.forEach(dataset => {
       if (typeof dataset.currentRun !== 'boolean') dataset.currentRun = true;
+      if (typeof dataset.showInLegend !== 'boolean') dataset.showInLegend = true;
     });
     if (!this.linesLocked || this.runNumber === 1) return;
 
@@ -300,22 +357,41 @@ class HodgkinHuxleyVisualization {
     currentDatasets.forEach(dataset => {
       chart.data.datasets.push({
         ...dataset,
-        label: `${dataset.baseLabel || dataset.label} (Run ${this.runNumber - 1})`,
+        label: dataset.baseLabel || dataset.label,
         borderDash: [6, 4],
         borderWidth: Math.max(1, (dataset.borderWidth || 2) - 0.5),
         currentRun: false,
-        data: [...dataset.data]
+        data: [...dataset.data],
+        showInLegend: false
       });
     });
+    this.syncLegendEntries(chart);
   }
 
   setCurrentRunData(chart, values) {
     const currentDatasets = chart.data.datasets.filter(dataset => dataset.currentRun);
     currentDatasets.forEach((dataset, index) => {
       dataset.baseLabel = dataset.baseLabel || dataset.label;
-      dataset.label = this.linesLocked ? `${dataset.baseLabel} (Run ${this.runNumber})` : dataset.baseLabel;
+      dataset.label = dataset.baseLabel;
       dataset.data = values[index];
     });
+    this.syncLegendEntries(chart);
+  }
+
+  syncLegendEntries(chart) {
+    if (!chart || !chart.data || !chart.data.datasets) return;
+    const seen = new Set();
+
+    for (let i = chart.data.datasets.length - 1; i >= 0; i--) {
+      const dataset = chart.data.datasets[i];
+      const key = dataset.baseLabel || dataset.label || 'dataset-' + i;
+      if (seen.has(key)) {
+        dataset.showInLegend = false;
+        continue;
+      }
+      seen.add(key);
+      dataset.showInLegend = true;
+    }
   }
 
   toggleLineLock() {
@@ -360,12 +436,15 @@ class HodgkinHuxleyVisualization {
    */
   resizeCharts() {
     if (this.vmChart) {
+      this.applyExpandedLayout(this.vmChart);
       this.vmChart.resize();
     }
     if (this.currentChart) {
+      this.applyExpandedLayout(this.currentChart);
       this.currentChart.resize();
     }
     if (this.drivingForceChart) {
+      this.applyExpandedLayout(this.drivingForceChart);
       this.drivingForceChart.resize();
     }
   }

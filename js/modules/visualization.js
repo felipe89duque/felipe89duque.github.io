@@ -129,8 +129,25 @@ class Visualization {
     this.chart.update();
   }
 
+  applyExpandedLayout() {
+    if (!this.chart || !this.chart.options || !this.chart.options.plugins) return;
+    const expanded = document.body.classList.contains('chart-expanded');
+
+    if (this.chart.options.plugins.legend) {
+      this.chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+    }
+
+    if (this.chart.options.plugins.title) {
+      this.chart.options.plugins.title.display = true;
+      this.chart.options.plugins.title.position = expanded ? 'left' : 'top';
+    }
+
+    this.chart.update('none');
+  }
+
   resizeChart() {
     if (!this.chart) return;
+    this.applyExpandedLayout();
     this.chart.resize();
   }
 }

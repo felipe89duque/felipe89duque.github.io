@@ -185,21 +185,19 @@
 
                     <div class="chart-panel">
                         <div class="chart-header">
-                            <h2>Resting potentials</h2>
                             <div class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</div>
                         </div>
                         <canvas id="vmChart" width="400" height="300"></canvas>
                     </div>
                 </div>
                 </div>
-
-            <div class="button-group">
-                <a href="../../index.html" class="btn btn-outline">← Home</a>
-                <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: tutorial →</a>
-            </div>
             </div>
             </div>
         </section>
+        <div class="button-group tutorial-footer-actions">
+            <a href="../../index.html" class="btn btn-outline">← Home</a>
+            <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: tutorial →</a>
+        </div>
     </main>
 
     <footer class="footer">
@@ -218,39 +216,78 @@
         const expandChartBtn = document.getElementById('expandChartBtn');
         const chartContainer = document.querySelector('.chart-container');
 
-        // Position floating parameter windows
         const parameterGroups = document.querySelectorAll('.parameter-group');
         parameterGroups.forEach(group => {
             const toggle = group.querySelector('.group-toggle');
             const content = group.querySelector('.group-content');
-            
+
             if (toggle && content) {
-                let hideTimeout;
-                
-                const showContent = () => {
-                    clearTimeout(hideTimeout);
-                    const rect = toggle.getBoundingClientRect();
-                    // Use viewport-relative coordinates for fixed positioning
-                    content.style.top = (rect.bottom + 8) + 'px';
-                    content.style.left = (rect.right + 8) + 'px';
-                    content.style.maxHeight = '600px';
-                    content.style.opacity = '1';
-                    content.style.pointerEvents = 'auto';
+                group.__hoverOpen = false;
+                group.__pinnedOpen = false;
+
+                const setExpanded = (isExpanded) => {
+                    group.classList.toggle('is-open', isExpanded);
+                    toggle.setAttribute('aria-expanded', String(isExpanded));
+                    content.style.maxHeight = isExpanded ? '600px' : '0';
+                    content.style.opacity = isExpanded ? '1' : '0';
+                    content.style.pointerEvents = isExpanded ? 'auto' : 'none';
                 };
-                
-                const hideContent = () => {
-                    hideTimeout = setTimeout(() => {
-                        content.style.maxHeight = '0';
-                        content.style.opacity = '0';
-                        content.style.pointerEvents = 'none';
-                    }, 100);
+
+                const syncState = () => {
+                    setExpanded(group.__pinnedOpen || group.__hoverOpen || toggle.matches(':focus'));
                 };
-                
-                toggle.addEventListener('mouseenter', showContent);
-                toggle.addEventListener('mouseleave', hideContent);
-                content.addEventListener('mouseenter', showContent);
-                content.addEventListener('mouseleave', hideContent);
+
+                toggle.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    group.__pinnedOpen = !group.__pinnedOpen;
+                    syncState();
+                });
+
+                group.addEventListener('mouseenter', () => {
+                    group.__hoverOpen = true;
+                    syncState();
+                });
+                group.addEventListener('mouseleave', () => {
+                    group.__hoverOpen = false;
+                    if (!group.__pinnedOpen) syncState();
+                });
+
+                toggle.addEventListener('focus', () => {
+                    group.__hoverOpen = true;
+                    syncState();
+                });
+                toggle.addEventListener('blur', () => {
+                    group.__hoverOpen = false;
+                    if (!group.__pinnedOpen) syncState();
+                });
+
+                content.addEventListener('mouseenter', () => {
+                    group.__hoverOpen = true;
+                    syncState();
+                });
+                content.addEventListener('mouseleave', () => {
+                    group.__hoverOpen = false;
+                    if (!group.__pinnedOpen) syncState();
+                });
             }
+        });
+
+        document.addEventListener('click', (event) => {
+            parameterGroups.forEach(group => {
+                const toggle = group.querySelector('.group-toggle');
+                const content = group.querySelector('.group-content');
+                if (!toggle || !content) return;
+                const isInsideGroup = group.contains(event.target);
+                if (!isInsideGroup) {
+                    group.__hoverOpen = false;
+                    group.__pinnedOpen = false;
+                    group.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                    content.style.pointerEvents = 'none';
+                }
+            });
         });
 
         if (conceptSidebar && conceptToggle) {
@@ -271,6 +308,9 @@
                 setTimeout(() => {
                     if (window.simulatorController && window.simulatorController.visualization) {
                         window.simulatorController.visualization.resizeChart();
+                    }
+                    if (window.visualization && typeof window.visualization.resizeChart === 'function') {
+                        window.visualization.resizeChart();
                     }
                 }, 50);
             });

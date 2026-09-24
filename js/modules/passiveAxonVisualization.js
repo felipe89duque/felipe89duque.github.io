@@ -136,14 +136,47 @@ class PassiveAxonVisualization {
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        title: { display: true, text: title, font: { size: 14, weight: 'bold' } },
-        legend: { display: true, position: 'top' }
+        title: { display: false, text: title, font: { size: 14, weight: 'bold' } },
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            generateLabels(chart) {
+              const seen = new Set();
+              return Chart.defaults.plugins.legend.labels.generateLabels(chart).filter(item => {
+                const dataset = chart.data.datasets[item.datasetIndex];
+                if (!dataset || dataset.showInLegend === false) return false;
+                const key = dataset.baseLabel || dataset.label || `dataset-${item.datasetIndex}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+              });
+            }
+          }
+        }
       },
       scales: {
         x: { type: 'linear', title: { display: true, text: xTitle } },
         y: { title: { display: true, text: yTitle } }
       }
     };
+  }
+
+  applyExpandedLayout(chart) {
+    if (!chart || !chart.options || !chart.options.plugins) return;
+    const expanded = document.body.classList.contains('chart-expanded');
+
+    if (chart.options.plugins.legend) {
+      chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+      chart.options.plugins.legend.align = 'center';
+    }
+
+    if (chart.options.plugins.title) {
+      chart.options.plugins.title.display = true;
+      chart.options.plugins.title.position = expanded ? 'left' : 'top';
+    }
+
+    chart.update('none');
   }
 
   update(history) {
@@ -166,7 +199,8 @@ class PassiveAxonVisualization {
       })));
       const currentDataset = this.spaceChart.data.datasets.find(dataset => dataset.currentRun);
       if (currentDataset) {
-        currentDataset.label = `${currentDataset.baseLabel} at ${history.timestamps[history.timestamps.length - 1].toFixed(1)} ms${this.linesLocked ? ` (Run ${this.runNumber})` : ''}`;
+        currentDataset.label = `${currentDataset.baseLabel} at ${history.timestamps[history.timestamps.length - 1].toFixed(1)} ms`;
+        currentDataset.showInLegend = true;
       }
       this.spaceChart.update('none');
     }
@@ -178,18 +212,21 @@ class PassiveAxonVisualization {
     if (!chart) return;
     chart.data.datasets.forEach(dataset => {
       if (typeof dataset.currentRun !== 'boolean') dataset.currentRun = true;
+      if (typeof dataset.showInLegend !== 'boolean') dataset.showInLegend = true;
     });
     if (!this.linesLocked || this.runNumber === 1) return;
     chart.data.datasets.filter(dataset => dataset.currentRun).forEach(dataset => {
       chart.data.datasets.push({
         ...dataset,
-        label: `${dataset.baseLabel || dataset.label} (Run ${this.runNumber - 1})`,
+        label: dataset.baseLabel || dataset.label,
         borderDash: [6, 4],
         borderWidth: Math.max(1, (dataset.borderWidth || 2) - 0.5),
         currentRun: false,
-        data: [...dataset.data]
+        data: [...dataset.data],
+        showInLegend: false
       });
     });
+    this.syncLegendEntries(chart);
   }
 
   setCurrentRunData(chart, index, data) {
@@ -197,8 +234,25 @@ class PassiveAxonVisualization {
     const dataset = currentDatasets[index];
     if (!dataset) return;
     dataset.baseLabel = dataset.baseLabel || dataset.label;
-    dataset.label = this.linesLocked ? `${dataset.baseLabel} (Run ${this.runNumber})` : dataset.baseLabel;
+    dataset.label = dataset.baseLabel;
     dataset.data = data;
+    this.syncLegendEntries(chart);
+  }
+
+  syncLegendEntries(chart) {
+    if (!chart || !chart.data || !chart.data.datasets) return;
+    const seen = new Set();
+
+    for (let i = chart.data.datasets.length - 1; i >= 0; i--) {
+      const dataset = chart.data.datasets[i];
+      const key = dataset.baseLabel || dataset.label || 'dataset-' + i;
+      if (seen.has(key)) {
+        dataset.showInLegend = false;
+        continue;
+      }
+      seen.add(key);
+      dataset.showInLegend = true;
+    }
   }
 
   toggleLineLock() {
@@ -247,7 +301,10 @@ class PassiveAxonVisualization {
       if (!voltage || typeof time !== 'number') return;
       this.spaceTimeChart.data.datasets[0].data = history.positions.map((position, index) => ({ x: position, y: voltage[index] }));
       const currentDataset = this.spaceTimeChart.data.datasets.find(dataset => dataset.currentRun);
-      if (currentDataset) currentDataset.label = `${currentDataset.baseLabel || 'Voltage'} at ${time.toFixed(1)} ms${this.linesLocked ? ` (Run ${this.runNumber})` : ''}`;
+      if (currentDataset) {
+        currentDataset.label = `${currentDataset.baseLabel || 'Voltage'} at ${time.toFixed(1)} ms`;
+        currentDataset.showInLegend = true;
+      }
       this.spaceTimeChart.update('none');
       this.timeChart.currentTime = time;
       this.timeChart.update('none');
@@ -289,6 +346,18 @@ class PassiveAxonVisualization {
   }
 
   resize() {
-    [this.timeChart, this.spaceChart, this.spaceTimeChart].forEach(chart => { if (chart) chart.resize(); });
+    [this.timeChart, this.spaceChart, this.spaceTimeChart].forEach(chart => {
+      if (!chart) return;
+      const expanded = document.body.classList.contains('chart-expanded');
+      if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
+        chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+        chart.options.plugins.legend.align = 'center';
+      }
+      if (chart.options && chart.options.plugins && chart.options.plugins.title) {
+        chart.options.plugins.title.display = true;
+        chart.options.plugins.title.position = expanded ? 'left' : 'top';
+      }
+      chart.resize();
+    });
   }
 }
