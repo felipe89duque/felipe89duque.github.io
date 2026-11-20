@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/responsive.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="../../js/tutorialAccessibility.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <!-- Navigation Bar -->
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="../../index.html">Axon Lab</a>
@@ -60,23 +62,23 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="tutorial-container tutorial-layout tutorial-main">
+    <main id="main-content" class="tutorial-container tutorial-layout tutorial-main">
         <section class="tutorial-section simulator-section">
             <div class="parameter-panel">
                 <div class="parameter-bar-header">
-                    <h3>Parameters</h3>
+                    <h2>Simulation parameters</h2>
                 </div>
                 <div class="parameter-bar">
                 <div class="parameter-group">
-                    <button class="group-toggle" type="button">Extracellular</button>
-                    <div class="group-content">
+                    <button class="group-toggle" type="button" aria-expanded="false" aria-controls="extracellular-parameters">Extracellular</button>
+                    <div class="group-content" id="extracellular-parameters">
                         <div class="parameter-block">
                             <div class="parameter-summary">
                                 <label for="kOut">K⁺ out <span id="kOut-value">5</span> mM</label>
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="kOut" class="slider" min="0.5" max="20" step="0.5" value="5">
-                                <input type="number" id="kOut-input" class="numeric-input" min="0.5" max="20" step="0.5" value="5">
+                                <input type="number" id="kOut-input" class="numeric-input" aria-label="Set extracellular potassium concentration in millimolar" min="0.5" max="20" step="0.5" value="5">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -85,7 +87,7 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="naOut" class="slider" min="80" max="200" step="5" value="145">
-                                <input type="number" id="naOut-input" class="numeric-input" min="80" max="200" step="5" value="145">
+                                <input type="number" id="naOut-input" class="numeric-input" aria-label="Set extracellular sodium concentration in millimolar" min="80" max="200" step="5" value="145">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -94,22 +96,22 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="clOut" class="slider" min="50" max="150" step="5" value="110">
-                                <input type="number" id="clOut-input" class="numeric-input" min="50" max="150" step="5" value="110">
+                                <input type="number" id="clOut-input" class="numeric-input" aria-label="Set extracellular chloride concentration in millimolar" min="50" max="150" step="5" value="110">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="parameter-group">
-                    <button class="group-toggle" type="button">Intracellular</button>
-                    <div class="group-content">
+                    <button class="group-toggle" type="button" aria-expanded="false" aria-controls="intracellular-parameters">Intracellular</button>
+                    <div class="group-content" id="intracellular-parameters">
                         <div class="parameter-block">
                             <div class="parameter-summary">
                                 <label for="kIn">K⁺ in <span id="kIn-value">140</span> mM</label>
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="kIn" class="slider" min="80" max="160" step="5" value="140">
-                                <input type="number" id="kIn-input" class="numeric-input" min="80" max="160" step="5" value="140">
+                                <input type="number" id="kIn-input" class="numeric-input" aria-label="Set intracellular potassium concentration in millimolar" min="80" max="160" step="5" value="140">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -118,7 +120,7 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="naIn" class="slider" min="5" max="50" step="1" value="12">
-                                <input type="number" id="naIn-input" class="numeric-input" min="5" max="50" step="1" value="12">
+                                <input type="number" id="naIn-input" class="numeric-input" aria-label="Set intracellular sodium concentration in millimolar" min="5" max="50" step="1" value="12">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -127,22 +129,22 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="clIn" class="slider" min="1" max="20" step="1" value="4">
-                                <input type="number" id="clIn-input" class="numeric-input" min="1" max="20" step="1" value="4">
+                                <input type="number" id="clIn-input" class="numeric-input" aria-label="Set intracellular chloride concentration in millimolar" min="1" max="20" step="1" value="4">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="parameter-group">
-                    <button class="group-toggle" type="button">Permeability</button>
-                    <div class="group-content">
+                    <button class="group-toggle" type="button" aria-expanded="false" aria-controls="permeability-parameters">Permeability</button>
+                    <div class="group-content" id="permeability-parameters">
                         <div class="parameter-block">
                             <div class="parameter-summary">
                                 <label for="pK">P<sub>K</sub> <span id="pK-value">1.00</span></label>
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="pK" class="slider" min="0" max="1" step="0.05" value="1">
-                                <input type="number" id="pK-input" class="numeric-input" min="0" max="1" step="0.05" value="1">
+                                <input type="number" id="pK-input" class="numeric-input" aria-label="Set potassium permeability" min="0" max="1" step="0.05" value="1">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -151,7 +153,7 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="pNa" class="slider" min="0" max="1" step="0.05" value="0.04">
-                                <input type="number" id="pNa-input" class="numeric-input" min="0" max="1" step="0.05" value="0.04">
+                                <input type="number" id="pNa-input" class="numeric-input" aria-label="Set sodium permeability" min="0" max="1" step="0.01" value="0.04">
                             </div>
                         </div>
                         <div class="parameter-block">
@@ -160,7 +162,7 @@
                             </div>
                             <div class="parameter-details">
                                 <input type="range" id="pCl" class="slider" min="0" max="1" step="0.05" value="0.20">
-                                <input type="number" id="pCl-input" class="numeric-input" min="0" max="1" step="0.05" value="0.20">
+                                <input type="number" id="pCl-input" class="numeric-input" aria-label="Set chloride permeability" min="0" max="1" step="0.05" value="0.20">
                             </div>
                         </div>
                     </div>
@@ -168,27 +170,80 @@
             </div>
             </div>
 
+            <div class="panel-resizer" role="separator" aria-label="Resize parameter panel" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="600" aria-valuenow="320" aria-valuetext="320 pixels" tabindex="0"></div>
             <div class="chart-and-content">
             <div class="simulator-content">
                 <div class="content-header">
-                    <p class="intro-text">
-                        Move any slider. The membrane potential updates instantly as you change ion concentrations and permeability.
-                    </p>
-                    <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
+                    <div>
+                        <!-- <h2>Run the simulation</h2> -->
+                        <p class="intro-text">Adjust the ion concentrations and permeability, then observe the effects on the membrane potential.
+                            Compare the membrane potential with the equilibrium potential for potassium, sodium, and chloride. Can you explain how each ion contributes to the overall membrane potential?
+                        </p>
+                    </div>
                 </div>
 
+                <div class="simulation-toolbar" role="group" aria-label="Simulation controls">
+                    <div class="simulation-toolbar-actions">
+                        <button id="run-btn" class="btn btn-primary" type="button">Run simulation</button>
+                        <button id="reset-btn" class="btn btn-outline" type="button">Reset parameters</button>
+                    </div>
+                    <div class="chart-actions">
+                        <div class="simulator-view-toggle" role="group" aria-label="Choose simulator view">
+                            <button class="btn btn-outline" type="button" data-simulator-view="parameters" aria-pressed="false">Parameters</button>
+                            <button class="btn btn-outline" type="button" data-simulator-view="graphs" aria-pressed="true">Graphs</button>
+                        </div>
+                        <button class="btn btn-outline btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts" aria-label="Expand charts" aria-pressed="false">Expand charts</button>
+                    </div>
+                </div>
+                <!-- <p id="simulation-status" class="simulation-status" role="status" aria-live="polite">Adjust parameters and run the simulation to update the graphs.</p> -->
+
                 <div class="chart-container">
-                    <div class="control-group compact-actions">
-                        <button id="reset-btn" class="btn btn-outline" style="width:30%;">Reset</button>
-                        <button id="clear-btn" class="btn btn-outline" style="width:30%; margin-top:8px;">Clear graph</button>
+                    <div class="potential-visuals-grid">
+                    <div class="chart-panel potential-chart-panel">
+                        <!-- <div class="chart-header"> -->
+                            <!-- <h3>Membrane and ion equilibrium potentials</h3> -->
+                            <!-- <p class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</p> -->
+                        <!-- </div> -->
+                        <!-- <p id="vm-chart-description">Compare the membrane potential with the equilibrium potential for potassium, sodium, and chloride. Can you explain how each ion contributes to the overall membrane potential?</p> -->
+                        <div class="potential-chart-canvas">
+                            <canvas id="vmChart" width="400" height="300" role="img" aria-label="Bar chart comparing membrane and ion equilibrium potentials" aria-describedby="vm-chart-description"></canvas>
+                        </div>
                     </div>
 
-                    <div class="chart-panel">
-                        <div class="chart-header">
-                            <div class="chart-legend-note" id="interpretation-text">K⁺ dominates the membrane potential.</div>
+                    <section class="membrane-card" aria-labelledby="membrane-diagram-heading">
+                        <h3 id="membrane-diagram-heading">Membrane schematic</h3>
+                        <div class="membrane-diagram" role="group" aria-describedby="membrane-diagram-description">
+                            <p class="membrane-side-label">Outside</p>
+                            <div class="membrane-pools membrane-outside" aria-label="Extracellular ion concentrations">
+                                <div id="kOut-ions" class="ion-pool ion-k" role="img" tabindex="0" aria-label="Potassium ions outside" title="Potassium ions outside the cell. Their relative amount represents the extracellular concentration." data-tooltip="Potassium outside the cell. Ion proportion represents extracellular concentration."></div>
+                                <div id="naOut-ions" class="ion-pool ion-na" role="img" tabindex="0" aria-label="Sodium ions outside" title="Sodium ions outside the cell. Their relative amount represents the extracellular concentration." data-tooltip="Sodium outside the cell. Ion proportion represents extracellular concentration."></div>
+                                <div id="clOut-ions" class="ion-pool ion-cl" role="img" tabindex="0" aria-label="Chloride ions outside" title="Chloride ions outside the cell. Their relative amount represents the extracellular concentration." data-tooltip="Chloride outside the cell. Ion proportion represents extracellular concentration."></div>
+                            </div>
+                            <div class="membrane-bilayer" aria-label="Cell membrane with potassium, sodium, and chloride channels">
+                                <div id="k-channel" class="membrane-channel channel-k" role="img" tabindex="0" aria-label="Potassium channel" title="Potassium channel. Its opening width shows permeability: how easily potassium crosses the membrane." data-tooltip="Potassium channel opening: wider means higher permeability and easier ion flow.">
+                                    <span class="channel-name">K⁺</span>
+                                    <span class="channel-track" aria-hidden="true"><span id="k-channel-pore" class="channel-pore"></span></span>
+                                </div>
+                                <div id="na-channel" class="membrane-channel channel-na" role="img" tabindex="0" aria-label="Sodium channel" title="Sodium channel. Its opening width shows permeability: how easily sodium crosses the membrane." data-tooltip="Sodium channel opening: wider means higher permeability and easier ion flow.">
+                                    <span class="channel-name">Na⁺</span>
+                                    <span class="channel-track" aria-hidden="true"><span id="na-channel-pore" class="channel-pore"></span></span>
+                                </div>
+                                <div id="cl-channel" class="membrane-channel channel-cl" role="img" tabindex="0" aria-label="Chloride channel" title="Chloride channel. Its opening width shows permeability: how easily chloride crosses the membrane." data-tooltip="Chloride channel opening: wider means higher permeability and easier ion flow.">
+                                    <span class="channel-name">Cl⁻</span>
+                                    <span class="channel-track" aria-hidden="true"><span id="cl-channel-pore" class="channel-pore"></span></span>
+                                </div>
+                            </div>
+                            <div class="membrane-pools membrane-inside" aria-label="Intracellular ion concentrations">
+                                <div id="kIn-ions" class="ion-pool ion-k" role="img" tabindex="0" aria-label="Potassium ions inside" title="Potassium ions inside the cell. Their relative amount represents the intracellular concentration." data-tooltip="Potassium inside the cell. Ion proportion represents intracellular concentration."></div>
+                                <div id="naIn-ions" class="ion-pool ion-na" role="img" tabindex="0" aria-label="Sodium ions inside" title="Sodium ions inside the cell. Their relative amount represents the intracellular concentration." data-tooltip="Sodium inside the cell. Ion proportion represents intracellular concentration."></div>
+                                <div id="clIn-ions" class="ion-pool ion-cl" role="img" tabindex="0" aria-label="Chloride ions inside" title="Chloride ions inside the cell. Their relative amount represents the intracellular concentration." data-tooltip="Chloride inside the cell. Ion proportion represents intracellular concentration."></div>
+                            </div>
+                            <p class="membrane-side-label">Inside</p>
                         </div>
-                        <canvas id="vmChart" width="400" height="300"></canvas>
+                        <p id="membrane-diagram-description" class="membrane-key">Wider colored pores mean greater permeability. The relative amount of each ion represents its concentration inside and outside of the membrane. Run simulation to animate changes.</p>
+                    </section>
                     </div>
+
                 </div>
                 </div>
             </div>
@@ -196,7 +251,9 @@
         </section>
         <div class="button-group tutorial-footer-actions">
             <a href="../../index.html" class="btn btn-outline">← Home</a>
-            <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: tutorial →</a>
+            <a href="parameter-experiments.html" class="btn btn-outline">Concentration experiments</a>
+            <a href="permeability-experiments.html" class="btn btn-outline">Permeability experiments</a>
+            <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: Tutorial 2 — sodium action potential →</a>
         </div>
     </main>
 
@@ -205,16 +262,25 @@
     </footer>
 
     <!-- Script Imports -->
+    <script src="../../js/chartAccessibility.js"></script>
     <script src="../../js/modules/ghkCalculator.js"></script>
     <script src="../../js/modules/ionConcentration.js"></script>
     <script src="../../js/modules/simulator.js"></script>
     <script src="../../js/modules/visualization.js"></script>
+    <script src="../../js/cellMembraneVisualization.js"></script>
     <script src="../../js/simulatorController.js"></script>
+    <script src="../../js/tutorialControls.js"></script>
     <script>
-        const conceptSidebar = document.getElementById('conceptSidebar');
-        const conceptToggle = document.getElementById('conceptToggle');
-        const expandChartBtn = document.getElementById('expandChartBtn');
-        const chartContainer = document.querySelector('.chart-container');
+        window.initializeTutorialControls({
+            resizeCharts: () => {
+                if (window.simulatorController && window.simulatorController.visualization) {
+                    window.simulatorController.visualization.resizeChart();
+                }
+                if (window.visualization && typeof window.visualization.resizeChart === 'function') {
+                    window.visualization.resizeChart();
+                }
+            }
+        });
 
         const parameterGroups = document.querySelectorAll('.parameter-group');
         parameterGroups.forEach(group => {
@@ -290,31 +356,6 @@
             });
         });
 
-        if (conceptSidebar && conceptToggle) {
-            conceptToggle.addEventListener('click', () => {
-                const isCollapsed = conceptSidebar.classList.toggle('collapsed');
-                conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
-                conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
-            });
-        }
-
-        if (expandChartBtn && chartContainer) {
-            expandChartBtn.addEventListener('click', () => {
-                chartContainer.classList.toggle('expanded');
-                document.body.classList.toggle('chart-expanded');
-                expandChartBtn.textContent = chartContainer.classList.contains('expanded') ? '✕' : '⛶';
-                
-                // Trigger chart resize after a brief delay to allow CSS to apply
-                setTimeout(() => {
-                    if (window.simulatorController && window.simulatorController.visualization) {
-                        window.simulatorController.visualization.resizeChart();
-                    }
-                    if (window.visualization && typeof window.visualization.resizeChart === 'function') {
-                        window.visualization.resizeChart();
-                    }
-                }, 50);
-            });
-        }
     </script>
 </body>
 </html>

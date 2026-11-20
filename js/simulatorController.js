@@ -7,6 +7,7 @@ class SimulatorController {
   constructor() {
     this.simulator = new Simulator();
     this.visualization = new Visualization('vmChart');
+    this.membraneVisualization = new CellMembraneVisualization();
     this.setupEventListeners();
     this.syncControlsFromModel();
     this.updateDisplay();
@@ -20,9 +21,9 @@ class SimulatorController {
     this.setupControlListener('naIn', 'NaIn');
     this.setupControlListener('clIn', 'ClIn');
 
-    this.setupPermeabilityListener('pK', 'K');
-    this.setupPermeabilityListener('pNa', 'Na');
-    this.setupPermeabilityListener('pCl', 'Cl');
+    this.setupPermeabilityListener('pK');
+    this.setupPermeabilityListener('pNa');
+    this.setupPermeabilityListener('pCl');
 
     document.querySelectorAll('.condition-btn').forEach((btn) => {
       btn.addEventListener('click', (event) => {
@@ -31,7 +32,7 @@ class SimulatorController {
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => this.reset());
-    document.getElementById('clear-btn').addEventListener('click', () => this.clearHistory());
+    document.getElementById('run-btn').addEventListener('click', () => this.runSimulation());
 
     const toggleCalc = document.getElementById('toggle-calc');
     if (toggleCalc) {
@@ -62,26 +63,23 @@ class SimulatorController {
       if (!Number.isFinite(newValue)) return;
       input.value = newValue;
       valueDisplay.textContent = newValue.toFixed(ionKey.includes('In') || ionKey.includes('Out') ? 1 : 0);
-      this.simulator.updateIon(ionKey, newValue);
-      this.updateDisplay();
     };
 
     const updateFromInput = () => {
+      if (input.value.trim() === '') return;
       const newValue = Number(input.value);
       if (!Number.isFinite(newValue)) return;
       const clampedValue = Math.min(Number(slider.max), Math.max(Number(slider.min), newValue));
       slider.value = clampedValue;
       input.value = clampedValue;
       valueDisplay.textContent = clampedValue.toFixed(ionKey.includes('In') || ionKey.includes('Out') ? 1 : 0);
-      this.simulator.updateIon(ionKey, clampedValue);
-      this.updateDisplay();
     };
 
     slider.addEventListener('input', updateFromSlider);
     input.addEventListener('input', updateFromInput);
   }
 
-  setupPermeabilityListener(elementId, ionType) {
+  setupPermeabilityListener(elementId) {
     const slider = document.getElementById(elementId);
     const input = document.getElementById(elementId + '-input');
     const valueDisplay = document.getElementById(elementId + '-value');
@@ -93,19 +91,16 @@ class SimulatorController {
       if (!Number.isFinite(newValue)) return;
       input.value = newValue;
       valueDisplay.textContent = newValue.toFixed(2);
-      this.simulator.updatePermeability(ionType, newValue);
-      this.updateDisplay();
     };
 
     const updateFromInput = () => {
+      if (input.value.trim() === '') return;
       const newValue = Number(input.value);
       if (!Number.isFinite(newValue)) return;
       const clampedValue = Math.min(Number(slider.max), Math.max(Number(slider.min), newValue));
       slider.value = clampedValue;
       input.value = clampedValue;
       valueDisplay.textContent = clampedValue.toFixed(2);
-      this.simulator.updatePermeability(ionType, clampedValue);
-      this.updateDisplay();
     };
 
     slider.addEventListener('input', updateFromSlider);
@@ -118,18 +113,18 @@ class SimulatorController {
     const permeability = state.permeability;
 
     const map = {
-      kOut: [ions.KOut, 'KOut'],
-      naOut: [ions.NaOut, 'NaOut'],
-      clOut: [ions.ClOut, 'ClOut'],
-      kIn: [ions.KIn, 'KIn'],
-      naIn: [ions.NaIn, 'NaIn'],
-      clIn: [ions.ClIn, 'ClIn'],
-      pK: [permeability.PK, 'K'],
-      pNa: [permeability.PNa, 'Na'],
-      pCl: [permeability.PCl, 'Cl']
+      kOut: ions.KOut,
+      naOut: ions.NaOut,
+      clOut: ions.ClOut,
+      kIn: ions.KIn,
+      naIn: ions.NaIn,
+      clIn: ions.ClIn,
+      pK: permeability.PK,
+      pNa: permeability.PNa,
+      pCl: permeability.PCl
     };
 
-    Object.entries(map).forEach(([key, [value, label]]) => {
+    Object.entries(map).forEach(([key, value]) => {
       const slider = document.getElementById(key);
       const input = document.getElementById(`${key}-input`);
       const valueDisplay = document.getElementById(`${key}-value`);
@@ -138,24 +133,65 @@ class SimulatorController {
       slider.value = numericValue;
       input.value = numericValue;
       valueDisplay.textContent = key.startsWith('p') ? numericValue.toFixed(2) : numericValue.toFixed(1);
-      if (key.startsWith('p')) {
-        this.simulator.updatePermeability(label, numericValue);
-      } else {
-        this.simulator.updateIon(label, numericValue);
-      }
     });
   }
 
+  runSimulation() {
+    const parameterInputs = document.querySelectorAll('.numeric-input');
+    const invalidInput = Array.from(parameterInputs).find((input) =>
+      input.value.trim() === '' || !input.checkValidity()
+    );
+    if (invalidInput) {
+      document.getElementById('simulation-status').textContent =
+        `Enter a valid value between ${invalidInput.min} and ${invalidInput.max} for ${invalidInput.getAttribute('aria-label')}.`;
+      invalidInput.focus();
+      return;
+    }
+
+    const ions = {
+      KOut: Number(document.getElementById('kOut-input').value),
+      NaOut: Number(document.getElementById('naOut-input').value),
+      ClOut: Number(document.getElementById('clOut-input').value),
+      KIn: Number(document.getElementById('kIn-input').value),
+      NaIn: Number(document.getElementById('naIn-input').value),
+      ClIn: Number(document.getElementById('clIn-input').value)
+    };
+    const permeability = {
+      PK: Number(document.getElementById('pK-input').value),
+      PNa: Number(document.getElementById('pNa-input').value),
+      PCl: Number(document.getElementById('pCl-input').value)
+    };
+
+    this.simulator.ionConcentrations.setConcentrations(ions);
+    this.simulator.permeability = permeability;
+    this.simulator.update();
+    const saved = this.saveStateForParameterExperiments();
+    this.updateDisplay();
+    document.getElementById('simulation-status').textContent =
+      `Simulation complete. Membrane potential: ${this.simulator.state.Vm.toFixed(1)} mV.${saved ? ' Settings are ready for the parameter experiments page.' : ' Settings could not be saved for the parameter experiments page.'}`;
+  }
+
+  saveStateForParameterExperiments() {
+    try {
+      localStorage.setItem('axonTutorial1State', JSON.stringify(this.simulator.getState()));
+      return true;
+    } catch (error) {
+      console.error('Unable to save Tutorial 1 settings for parameter experiments.', error);
+      return false;
+    }
+  }
+
   applyCondition(conditionName) {
-    const enabled = this.simulator.applyCondition(conditionName);
-    if (!enabled) return;
+    const ions = this.simulator.ionConcentrations.getConditions()[conditionName];
+    if (!ions) return;
 
     document.querySelectorAll('.condition-btn').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.condition === conditionName);
     });
 
-    this.syncControlsFromModel();
-    this.updateDisplay();
+    this.setControlsFromValues(ions, this.simulator.permeability);
+    document.getElementById('simulation-status').textContent =
+      'Preset parameters selected. Run the simulation to update the graphs.';
   }
 
   applyGuideSetup(setup) {
@@ -177,17 +213,34 @@ class SimulatorController {
     const chosen = settings[setup];
     if (!chosen) return;
 
-    Object.entries(chosen.ions).forEach(([key, value]) => {
-      this.simulator.updateIon(key, Number(value));
+    this.setControlsFromValues(chosen.ions, chosen.permeability);
+    document.getElementById('simulation-status').textContent =
+      'Guide parameters selected. Run the simulation to update the graphs.';
+  }
+
+  setControlsFromValues(ions, permeability) {
+    const values = {
+      kOut: ions.KOut,
+      naOut: ions.NaOut,
+      clOut: ions.ClOut,
+      kIn: ions.KIn,
+      naIn: ions.NaIn,
+      clIn: ions.ClIn,
+      pK: permeability.PK,
+      pNa: permeability.PNa,
+      pCl: permeability.PCl
+    };
+
+    Object.entries(values).forEach(([key, value]) => {
+      const slider = document.getElementById(key);
+      const input = document.getElementById(`${key}-input`);
+      const valueDisplay = document.getElementById(`${key}-value`);
+      if (!slider || !input || !valueDisplay) return;
+      const numericValue = Number(value);
+      slider.value = numericValue;
+      input.value = numericValue;
+      valueDisplay.textContent = key.startsWith('p') ? numericValue.toFixed(2) : numericValue.toFixed(1);
     });
-
-    this.simulator.permeability.PK = chosen.permeability.PK;
-    this.simulator.permeability.PNa = chosen.permeability.PNa;
-    this.simulator.permeability.PCl = chosen.permeability.PCl;
-    this.simulator.update();
-
-    this.syncControlsFromModel();
-    this.updateDisplay();
   }
 
   updateDisplay() {
@@ -213,26 +266,22 @@ class SimulatorController {
       calcValues.textContent = `Numerator = ${numerator.toFixed(2)}, Denominator = ${denominator.toFixed(2)}`;
     }
 
-    const interpretationText = document.getElementById('interpretation-text');
-    if (interpretationText) {
-      const pk = state.permeability.PK;
-      const pNa = state.permeability.PNa;
+    // const interpretationText = document.getElementById('interpretation-text');
+    // if (interpretationText) {
+    //   const pk = state.permeability.PK;
+    //   const pNa = state.permeability.PNa;
 
-      if (pk > pNa) {
-        interpretationText.textContent = 'The membrane potential remains strongly influenced by K⁺ because K⁺ permeability exceeds Na⁺ permeability.';
-      } else if (pNa > pk) {
-        interpretationText.textContent = 'Na⁺ permeability is now dominant, pulling the membrane potential upward toward ENa.';
-      } else {
-        interpretationText.textContent = 'Both ions contribute comparably, so the membrane potential sits between EK and ENa.';
-      }
-    }
+    //   if (pk > pNa) {
+    //     interpretationText.textContent = 'The membrane potential remains strongly influenced by K⁺ because K⁺ permeability exceeds Na⁺ permeability.';
+    //   } else if (pNa > pk) {
+    //     interpretationText.textContent = 'Na⁺ permeability is now dominant, pulling the membrane potential upward toward ENa.';
+    //   } else {
+    //     interpretationText.textContent = 'Both ions contribute comparably, so the membrane potential sits between EK and ENa.';
+    //   }
+    // }
 
-    this.visualization.updateChart(this.simulator.getHistory());
-  }
-
-  clearHistory() {
-    this.simulator.clearHistory();
-    this.updateDisplay();
+    this.visualization.updateChart(state);
+    this.membraneVisualization.update(state);
   }
 
   reset() {
@@ -242,6 +291,11 @@ class SimulatorController {
     });
     this.syncControlsFromModel();
     this.updateDisplay();
+    const saved = this.saveStateForParameterExperiments();
+    document.getElementById('simulation-status').textContent =
+      saved
+        ? 'Parameters reset to their default values. The same settings are available on the parameter experiments page.'
+        : 'Parameters reset to their default values. Settings could not be saved for the parameter experiments page.';
   }
 }
 

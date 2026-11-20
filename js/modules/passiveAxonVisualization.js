@@ -16,10 +16,10 @@ class PassiveAxonVisualization {
       type: 'line',
       data: {
         datasets: [
-          { label: 'x = 0', baseLabel: 'x = 0', data: [], borderColor: '#d94f70', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-          { label: 'x = 0.25', baseLabel: 'x = 0.25', data: [], borderColor: '#e58f3d', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-          { label: 'x = 0.5', baseLabel: 'x = 0.5', data: [], borderColor: '#2c9a9a', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-          { label: 'x = 0.75', baseLabel: 'x = 0.75', data: [], borderColor: '#4169a1', borderWidth: 2, pointRadius: 0, tension: 0.1 }
+          { label: 'x = 0', baseLabel: 'x = 0', data: [], borderColor: '#1f77b4', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+          { label: 'x = 0.25', baseLabel: 'x = 0.25', data: [], borderColor: '#ff7f0e', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+          { label: 'x = 0.5', baseLabel: 'x = 0.5', data: [], borderColor: '#2ca02c', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+          { label: 'x = 0.75', baseLabel: 'x = 0.75', data: [], borderColor: '#d62728', borderWidth: 2, pointRadius: 0, tension: 0.1 }
         ]
       },
       options: this.chartOptions('Time (ms)', 'Membrane voltage (mV)', 'Voltage-vs-Time'),
@@ -37,8 +37,8 @@ class PassiveAxonVisualization {
           label: 'Voltage at final time',
           baseLabel: 'Voltage profile',
           data: [],
-          borderColor: '#245c73',
-          backgroundColor: 'rgba(36, 92, 115, 0.12)',
+          borderColor: '#1f77b4',
+          backgroundColor: 'rgba(31, 119, 180, 0.12)',
           borderWidth: 3,
           pointRadius: 0,
           fill: true,
@@ -60,8 +60,8 @@ class PassiveAxonVisualization {
           label: 'Voltage at 0.0 ms',
           baseLabel: 'Space-time voltage',
           data: [],
-          borderColor: '#245c73',
-          backgroundColor: 'rgba(36, 92, 115, 0.12)',
+          borderColor: '#1f77b4',
+          backgroundColor: 'rgba(31, 119, 180, 0.12)',
           borderWidth: 3,
           pointRadius: 0,
           fill: true,
@@ -82,7 +82,7 @@ class PassiveAxonVisualization {
         const x = scales.x.getPixelForValue(chart.currentTime);
         if (x < chartArea.left || x > chartArea.right) return;
         ctx.save();
-        ctx.strokeStyle = '#245c73';
+        ctx.strokeStyle = '#1f77b4';
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 4]);
         ctx.beginPath();
@@ -96,10 +96,10 @@ class PassiveAxonVisualization {
 
   spaceMarkerPlugin() {
     const markers = [
-      { position: 0, label: 'x = 0', color: '#d94f70' },
-      { position: 0.25, label: 'x = 0.25', color: '#e58f3d' },
-      { position: 0.5, label: 'x = 0.5', color: '#2c9a9a' },
-      { position: 0.75, label: 'x = 0.75', color: '#4169a1' }
+      { position: 0, label: 'x = 0', color: '#1f77b4' },
+      { position: 0.25, label: 'x = 0.25', color: '#ff7f0e' },
+      { position: 0.5, label: 'x = 0.5', color: '#2ca02c' },
+      { position: 0.75, label: 'x = 0.75', color: '#d62728' }
     ];
 
     return {
@@ -167,13 +167,13 @@ class PassiveAxonVisualization {
     const expanded = document.body.classList.contains('chart-expanded');
 
     if (chart.options.plugins.legend) {
-      chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+      chart.options.plugins.legend.position = 'top';
       chart.options.plugins.legend.align = 'center';
     }
 
     if (chart.options.plugins.title) {
-      chart.options.plugins.title.display = true;
-      chart.options.plugins.title.position = expanded ? 'left' : 'top';
+      chart.options.plugins.title.display = !expanded;
+      chart.options.plugins.title.position = 'top';
     }
 
     chart.update('none');
@@ -350,12 +350,12 @@ class PassiveAxonVisualization {
       if (!chart) return;
       const expanded = document.body.classList.contains('chart-expanded');
       if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
-        chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+        chart.options.plugins.legend.position = 'top';
         chart.options.plugins.legend.align = 'center';
       }
       if (chart.options && chart.options.plugins && chart.options.plugins.title) {
-        chart.options.plugins.title.display = true;
-        chart.options.plugins.title.position = expanded ? 'left' : 'top';
+        chart.options.plugins.title.display = !expanded;
+        chart.options.plugins.title.position = 'top';
       }
       chart.resize();
     });

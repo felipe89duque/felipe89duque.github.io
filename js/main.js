@@ -14,7 +14,7 @@ function drawNeuron(ctx, width, height) {
     ctx.fillRect(0, 0, width, height);
 
     // Draw soma (cell body)
-    ctx.fillStyle = '#0066cc';
+    ctx.fillStyle = '#1f77b4';
     ctx.beginPath();
     ctx.arc(width / 2, height / 2, 40, 0, Math.PI * 2);
     ctx.fill();

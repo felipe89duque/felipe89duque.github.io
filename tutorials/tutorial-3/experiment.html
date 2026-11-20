@@ -7,9 +7,12 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/responsive.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../js/chartAccessibility.js"></script>
+    <script defer src="../../js/tutorialAccessibility.js"></script>
 </head>
 <body>
-    <nav class="navbar">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo"><a href="../../index.html">Axon Lab</a></div>
             <ul class="nav-menu">
@@ -43,10 +46,10 @@
         </div>
     </aside>
 
-    <main class="tutorial-container tutorial-layout tutorial-main">
+    <main id="main-content" class="tutorial-container tutorial-layout tutorial-main">
         <section class="tutorial-section simulator-section passive-simulator-section">
             <div class="parameter-panel">
-                <div class="parameter-bar-header"><h3>Axon parameters</h3></div>
+                <div class="parameter-bar-header"><h2>Axon parameters</h2></div>
                 <div class="parameter-bar">
                     <div class="parameter-group">
                         <button class="group-toggle" type="button">Passive membrane</button>
@@ -70,16 +73,32 @@
                     <h3>Stimulating electrode</h3>
                     <p>Click the axon to move the blue electrode.</p>
                     <div id="axon-track" class="axon-track" role="slider" aria-label="Stimulating electrode position" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0"><span class="axon-line"></span><span id="electrode-marker" class="electrode-marker"></span><span class="axon-end left">0</span><span class="axon-end right">1</span></div>
-                    <output id="electrode-position">Position: 0.000</output>
+                    <output id="electrode-position" aria-live="polite">Position: 0.000</output>
                 </div>
             </div>
 
+            <div class="panel-resizer" role="separator" aria-label="Resize parameter panel" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="600" aria-valuenow="320" aria-valuetext="320 pixels" tabindex="0"></div>
             <div class="chart-and-content">
                 <div class="simulator-content">
-                    <div class="content-header"><p class="intro-text">The first two graphs show the same passive voltage spread from different perspectives. Watch the space-time view to connect them.</p><div class="chart-actions"><button class="btn-icon" id="lockLinesBtn" type="button" title="Lock plotted lines" aria-label="Lock plotted lines" aria-pressed="false">&#128274;</button><button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">&#x26F6;</button></div></div>
+                    <div class="content-header"><p class="intro-text">The first two graphs show the same passive voltage spread from different perspectives. Watch the space-time view to connect them.</p></div>
                     <div class="passive-readouts" aria-live="polite"><div><span>Length constant</span><strong id="length-constant">--</strong></div><div><span>Time constant</span><strong id="time-constant">--</strong></div><div><span>Stimulus node</span><strong id="stimulus-node">--</strong></div></div>
+                    <div class="simulation-toolbar" role="group" aria-label="Simulation controls">
+                        <div class="simulation-toolbar-actions">
+                            <button id="run-btn" class="btn btn-primary" type="button">Run simulation</button>
+                            <button id="animation-toggle" class="btn btn-outline" type="button" aria-pressed="true">Pause loop</button>
+                            <button id="reset-btn" class="btn btn-outline" type="button">Reset</button>
+                            <button id="clear-btn" class="btn btn-outline" type="button">Clear graphs</button>
+                        </div>
+                        <div class="chart-actions">
+                            <div class="simulator-view-toggle" role="group" aria-label="Choose simulator view">
+                                <button class="btn btn-outline" type="button" data-simulator-view="parameters" aria-pressed="false">Parameters</button>
+                                <button class="btn btn-outline" type="button" data-simulator-view="graphs" aria-pressed="true">Graphs</button>
+                            </div>
+                            <button class="btn btn-outline" id="lockLinesBtn" type="button" title="Lock plotted lines" aria-label="Lock plotted lines" aria-pressed="false">Lock lines</button>
+                            <button class="btn btn-outline btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts" aria-label="Expand charts" aria-pressed="false">Expand charts</button>
+                        </div>
+                    </div>
                     <div class="chart-container passive-chart-container">
-                        <div class="control-group compact-actions"><button id="run-btn" class="btn btn-primary" type="button">Run simulation</button><button id="animation-toggle" class="btn btn-outline" type="button">Pause loop</button><button id="reset-btn" class="btn btn-outline" type="button">Reset</button><button id="clear-btn" class="btn btn-outline" type="button">Clear graphs</button></div>
                         <div class="chart-panel"><canvas id="voltageTimeChart"></canvas></div>
                         <div class="chart-panel"><canvas id="voltageSpaceChart"></canvas></div>
                         <div class="space-time-heading"><h2>One view across space and time</h2><output id="space-time-clock">Time: --</output></div>
@@ -95,10 +114,22 @@
 
     <script src="../../js/modules/passiveAxonSimulator.js"></script>
     <script src="../../js/modules/passiveAxonVisualization.js"></script>
+    <script src="../../js/tutorialControls.js"></script>
     <script>
         const simulator = new PassiveAxonSimulator();
         const visualization = new PassiveAxonVisualization('voltageTimeChart', 'voltageSpaceChart');
         window.visualization = visualization;
+        window.initializeTutorialControls({
+            visualization,
+            resizeCharts: () => {
+                visualization.resize();
+                const chart = document.querySelector('.chart-panel canvas');
+                if (chart && chart.chart) {
+                    chart.chart.resize();
+                    chart.chart.update('none');
+                }
+            }
+        });
         const defaults = { membraneResistance: 10000, diameter: 20, capacitance: 1, stimulusAmplitude: 10, stimulusStart: 0, stimulusDuration: 20, totalTime: 20 };
         const parameterNames = Object.keys(defaults);
         const positionOutput = document.getElementById('electrode-position');
@@ -125,6 +156,7 @@
             const history = simulator.run();
             visualization.update(history);
             document.getElementById('animation-toggle').textContent = 'Pause loop';
+            document.getElementById('animation-toggle').setAttribute('aria-pressed', 'true');
             document.getElementById('length-constant').textContent = `${history.lengthConstant.toFixed(3)} cm`;
             document.getElementById('time-constant').textContent = `${history.timeConstant.toFixed(2)} ms`;
             document.getElementById('stimulus-node').textContent = history.stimulusNode;
@@ -163,6 +195,7 @@
         document.getElementById('animation-toggle').addEventListener('click', event => {
             const isPlaying = visualization.toggleAnimation();
             event.currentTarget.textContent = isPlaying ? 'Pause loop' : 'Play loop';
+            event.currentTarget.setAttribute('aria-pressed', String(isPlaying));
         });
 
         document.getElementById('clear-btn').addEventListener('click', () => visualization.clear());
@@ -175,43 +208,11 @@
             simulator.reset();
             visualization.clear();
             document.getElementById('animation-toggle').textContent = 'Play loop';
+            document.getElementById('animation-toggle').setAttribute('aria-pressed', 'false');
             document.getElementById('space-time-clock').textContent = 'Time: --';
             document.getElementById('length-constant').textContent = '--';
             document.getElementById('time-constant').textContent = '--';
             document.getElementById('stimulus-node').textContent = '--';
-        });
-
-        document.getElementById('expandChartBtn').addEventListener('click', event => {
-            const chartContainer = document.querySelector('.chart-container');
-            chartContainer.classList.toggle('expanded');
-            document.body.classList.toggle('chart-expanded');
-            event.currentTarget.innerHTML = chartContainer.classList.contains('expanded') ? '&#x2715;' : '&#x26F6;';
-            setTimeout(() => {
-                visualization.resize();
-                const chart = document.querySelector('.chart-panel canvas');
-                if (chart && chart.chart) {
-                    chart.chart.resize();
-                    chart.chart.update('none');
-                }
-            }, 50);
-        });
-
-        const lockLinesBtn = document.getElementById('lockLinesBtn');
-        lockLinesBtn.addEventListener('click', () => {
-            const locked = visualization.toggleLineLock();
-            lockLinesBtn.setAttribute('aria-pressed', String(locked));
-            lockLinesBtn.title = locked ? 'Unlock plotted lines' : 'Lock plotted lines';
-            lockLinesBtn.setAttribute('aria-label', lockLinesBtn.title);
-            lockLinesBtn.innerHTML = locked ? '&#128275;' : '&#128274;';
-            lockLinesBtn.classList.toggle('active', locked);
-        });
-
-        const conceptSidebar = document.getElementById('conceptSidebar');
-        const conceptToggle = document.getElementById('conceptToggle');
-        conceptToggle.addEventListener('click', () => {
-            const isCollapsed = conceptSidebar.classList.toggle('collapsed');
-            conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
-            conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
         });
 
         document.querySelectorAll('.parameter-group').forEach(group => {

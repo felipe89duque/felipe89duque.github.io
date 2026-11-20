@@ -16,85 +16,35 @@ class Visualization {
 
   initChart() {
     this.chart = new Chart(this.ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
-        labels: [],
+        labels: [
+          'Membrane potential (Vm)',
+          'Potassium equilibrium (EK)',
+          'Sodium equilibrium (ENa)',
+          'Chloride equilibrium (ECl)'
+        ],
         datasets: [
           {
-            label: 'Vm (Membrane Potential)',
+            label: 'Potential (mV)',
             data: [],
-            borderColor: '#FF6B6B',
-            backgroundColor: 'rgba(255, 107, 107, 0.08)',
-            borderWidth: 3,
-            tension: 0.3,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            yAxisID: 'y'
-          },
-          {
-            label: 'EK (K+ Equilibrium)',
-            data: [],
-            borderColor: '#4ECDC4',
-            backgroundColor: 'rgba(78, 205, 196, 0.08)',
+            backgroundColor: ['#d62728', '#1f77b4', '#ff7f0e', '#2ca02c'],
+            borderColor: ['#a51d24', '#195f90', '#c45e00', '#208020'],
             borderWidth: 2,
-            tension: 0.3,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            yAxisID: 'y',
-            borderDash: [5, 5]
-          },
-          {
-            label: 'ENa (Na+ Equilibrium)',
-            data: [],
-            borderColor: '#FFD93D',
-            backgroundColor: 'rgba(255, 217, 61, 0.08)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            yAxisID: 'y',
-            borderDash: [5, 5]
-          },
-          {
-            label: 'ECl (Cl- Equilibrium)',
-            data: [],
-            borderColor: '#A8E6CF',
-            backgroundColor: 'rgba(168, 230, 207, 0.08)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            yAxisID: 'y',
-            borderDash: [5, 5]
+            borderRadius: 8,
+            maxBarThickness: 64
           }
         ]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
+        maintainAspectRatio: false,
+        animation: { duration: 650, easing: 'easeOutQuart' },
         plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              usePointStyle: true,
-              padding: 15,
-              font: {
-                size: 12,
-                weight: 'bold'
-              }
-            }
-          },
+          legend: { display: false },
           title: {
             display: true,
-            text: 'Membrane Potential Over Time',
+            text: 'Current membrane potential and ion equilibrium potentials',
             font: {
               size: 14,
               weight: 'bold'
@@ -102,6 +52,7 @@ class Visualization {
           }
         },
         scales: {
+          x: { grid: { display: false } },
           y: {
             type: 'linear',
             display: true,
@@ -111,21 +62,18 @@ class Visualization {
               text: 'Potential (mV)'
             },
             min: -150,
-            max: 100
+            max: 100,
+            ticks: { stepSize: 25 }
           }
         }
       }
     });
   }
 
-  updateChart(history) {
+  updateChart(state) {
     if (!this.chart) return;
 
-    this.chart.data.labels = history.timestamps;
-    this.chart.data.datasets[0].data = history.Vm;
-    this.chart.data.datasets[1].data = history.EK;
-    this.chart.data.datasets[2].data = history.ENa;
-    this.chart.data.datasets[3].data = history.ECl;
+    this.chart.data.datasets[0].data = [state.Vm, state.EK, state.ENa, state.ECl];
     this.chart.update();
   }
 
@@ -133,13 +81,9 @@ class Visualization {
     if (!this.chart || !this.chart.options || !this.chart.options.plugins) return;
     const expanded = document.body.classList.contains('chart-expanded');
 
-    if (this.chart.options.plugins.legend) {
-      this.chart.options.plugins.legend.position = expanded ? 'right' : 'top';
-    }
-
     if (this.chart.options.plugins.title) {
       this.chart.options.plugins.title.display = true;
-      this.chart.options.plugins.title.position = expanded ? 'left' : 'top';
+      this.chart.options.plugins.title.position = 'top';
     }
 
     this.chart.update('none');
@@ -151,4 +95,3 @@ class Visualization {
     this.chart.resize();
   }
 }
-

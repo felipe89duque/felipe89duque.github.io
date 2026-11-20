@@ -32,7 +32,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'Vm (mV)',
               data: [],
-              borderColor: '#ff6b6b',
+              borderColor: '#1f77b4',
               borderWidth: 2,
               fill: false,
               tension: 0.1,
@@ -43,11 +43,11 @@ class HodgkinHuxleyVisualization {
             {
               label: 'Stimulus (µA/cm²)',
               data: [],
-              borderColor: '#4ecdc4',
+              borderColor: '#ff7f0e',
               borderWidth: 1.5,
               borderDash: [5, 5],
               fill: true,
-              fillColor: 'rgba(78, 205, 196, 0.1)',
+              fillColor: 'rgba(255, 127, 14, 0.1)',
               tension: 0.1,
               pointRadius: 0,
               pointHoverRadius: 0,
@@ -130,7 +130,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'INa (mA/cm²)',
               data: [],
-              borderColor: '#00a8e8',
+              borderColor: '#1f77b4',
               borderWidth: 2,
               fill: false,
               tension: 0.1,
@@ -140,7 +140,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'IK (mA/cm²)',
               data: [],
-              borderColor: '#ffd60a',
+              borderColor: '#ff7f0e',
               borderWidth: 2,
               fill: false,
               tension: 0.1,
@@ -150,7 +150,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'IL (mA/cm²)',
               data: [],
-              borderColor: '#b5bdc8',
+              borderColor: '#2ca02c',
               borderWidth: 1.5,
               borderDash: [5, 5],
               fill: false,
@@ -223,7 +223,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'VNa = Vm - ENa (mV)',
               data: [],
-              borderColor: '#ff8c00',
+              borderColor: '#1f77b4',
               borderWidth: 2,
               fill: false,
               tension: 0.1,
@@ -233,7 +233,7 @@ class HodgkinHuxleyVisualization {
             {
               label: 'VK = Vm - EK (mV)',
               data: [],
-              borderColor: '#6c63ff',
+              borderColor: '#ff7f0e',
               borderWidth: 2,
               fill: false,
               tension: 0.1,
@@ -333,13 +333,13 @@ class HodgkinHuxleyVisualization {
     const expanded = document.body.classList.contains('chart-expanded');
 
     if (chart.options.plugins.legend) {
-      chart.options.plugins.legend.position = expanded ? 'right' : 'top';
+      chart.options.plugins.legend.position = 'top';
       chart.options.plugins.legend.align = 'center';
     }
 
     if (chart.options.plugins.title) {
-      chart.options.plugins.title.display = true;
-      chart.options.plugins.title.position = expanded ? 'left' : 'top';
+      chart.options.plugins.title.display = !expanded;
+      chart.options.plugins.title.position = 'top';
     }
 
     chart.update('none');

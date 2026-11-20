@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial 1: Permeability experiments</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="../../js/tutorialAccessibility.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-logo"><a href="../../index.html">Axon Lab</a></div>
+            <ul class="nav-menu">
+                <li><a href="../../index.html" class="nav-link">Home</a></li>
+                <li><a href="../../index.html#tutorials" class="nav-link">Tutorials</a></li>
+                <li><a href="experiment.html" class="nav-link">Membrane simulator</a></li>
+                <li><a href="parameter-experiments.html" class="nav-link">Concentration experiments</a></li>
+                <li><span class="nav-link-text">Tutorial 1 - Permeability experiments</span></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="tutorial-header">
+        <div class="tutorial-header-container">
+            <p class="eyebrow">Tutorial 1 · Permeability experiments</p>
+            <h1>How does ion permeability affect membrane potential?</h1>
+        </div>
+    </section>
+
+    <main id="main-content" class="tutorial-container parameter-experiments-page">
+        <section class="parameter-sweeps" aria-labelledby="sweep-heading">
+            <!-- <h2 id="sweep-heading">Explore permeability and membrane potential</h2> -->
+            <p>Enter one or more permeability values in each spreadsheet, then run the graphs. Blank rows are ignored and removed. Each value changes only the named permeability; all other concentrations and permeabilities stay fixed at the most recently run settings from the membrane simulator.</p>
+            <p id="sweep-settings-status" class="simulation-status" role="status" aria-live="polite">Using default parameter settings. Run the membrane simulator first to use your own settings here.</p>
+
+            <div class="control-group compact-actions">
+                <button id="run-sweeps-btn" class="btn btn-primary" type="button">Run parameter graphs</button>
+                <button id="clear-sweeps-btn" class="btn btn-outline" type="button">Clear graphs and values</button>
+            </div>
+            <p id="sweep-run-status" class="simulation-status" role="status" aria-live="polite">Fill in the input tables, then run the graphs.</p>
+
+            <div class="sweep-grid">
+                <article class="sweep-card">
+                    <h3>Potassium permeability</h3>
+                    <div class="sweep-card-content">
+                        <div class="sweep-inputs">
+                            <table class="sweep-input-table"><caption>Enter potassium permeability values (0–1)</caption><thead><tr><th scope="col">Trial</th><th scope="col">Permeability</th><th scope="col">Action</th></tr></thead><tbody id="sweep-pk-values"></tbody></table>
+                            <button class="add-sweep-row" type="button" data-sweep-id="pK">Add potassium permeability</button>
+                            <p id="sweep-pK-status" class="sweep-status" role="status" aria-live="polite">Enter one or more values. Empty rows will be ignored.</p>
+                        </div>
+                        <div class="sweep-visualization">
+                            <div class="sweep-chart"><canvas id="sweep-chart-pK" role="img" aria-label="Graph of potassium permeability and membrane potential" aria-describedby="sweep-pK-description"></canvas></div>
+                            <p id="sweep-pK-description">Membrane potential calculated at each potassium permeability using the selected settings for all other parameters.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="sweep-card">
+                    <h3>Sodium permeability</h3>
+                    <div class="sweep-card-content">
+                        <div class="sweep-inputs">
+                            <table class="sweep-input-table"><caption>Enter sodium permeability values (0–1)</caption><thead><tr><th scope="col">Trial</th><th scope="col">Permeability</th><th scope="col">Action</th></tr></thead><tbody id="sweep-pna-values"></tbody></table>
+                            <button class="add-sweep-row" type="button" data-sweep-id="pNa">Add sodium permeability</button>
+                            <p id="sweep-pNa-status" class="sweep-status" role="status" aria-live="polite">Enter one or more values. Empty rows will be ignored.</p>
+                        </div>
+                        <div class="sweep-visualization">
+                            <div class="sweep-chart"><canvas id="sweep-chart-pNa" role="img" aria-label="Graph of sodium permeability and membrane potential" aria-describedby="sweep-pNa-description"></canvas></div>
+                            <p id="sweep-pNa-description">Membrane potential calculated at each sodium permeability using the selected settings for all other parameters.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <div class="button-group tutorial-footer-actions">
+            <a href="experiment.html" class="btn btn-outline">← Membrane simulator</a>
+            <a href="parameter-experiments.html" class="btn btn-outline">← Concentration experiments</a>
+            <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: Tutorial 2 — sodium action potential →</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Axon. Institute of Basic Medical science, University of Oslo.</p>
+    </footer>
+
+    <script src="../../js/chartAccessibility.js"></script>
+    <script src="../../js/modules/ghkCalculator.js"></script>
+    <script src="../../js/modules/ionConcentration.js"></script>
+    <script src="../../js/modules/simulator.js"></script>
+    <script src="../../js/parameterSweep.js"></script>
+    <script>
+        const simulator = new Simulator();
+        const parameterSweep = new ParameterSweep(simulator.ghkCalculator);
+        const settingsStatus = document.getElementById('sweep-settings-status');
+        let state = simulator.getState();
+
+        try {
+            const savedSettings = localStorage.getItem('axonTutorial1State');
+            if (savedSettings) {
+                const savedState = JSON.parse(savedSettings);
+                const ionKeys = ['KOut', 'KIn', 'NaOut', 'NaIn', 'ClOut', 'ClIn'];
+                const permeabilityKeys = ['PK', 'PNa', 'PCl'];
+                const valid = ionKeys.every((key) => Number.isFinite(savedState.ions[key])) &&
+                    permeabilityKeys.every((key) => Number.isFinite(savedState.permeability[key]));
+                if (valid) {
+                    state = savedState;
+                    settingsStatus.textContent = 'Using the most recently run settings from the membrane simulator.';
+                } else {
+                    settingsStatus.textContent = 'Saved settings were incomplete. Using the default parameter settings instead.';
+                }
+            }
+        } catch (error) {
+            console.error('Unable to load saved Tutorial 1 settings.', error);
+            settingsStatus.textContent = 'Saved settings could not be read. Using the default parameter settings instead.';
+        }
+
+        document.getElementById('run-sweeps-btn').addEventListener('click', () => {
+            const errors = parameterSweep.run(state);
+            document.getElementById('sweep-run-status').textContent = errors.length
+                ? `${errors.length} graph${errors.length === 1 ? '' : 's'} could not be updated. Check the message beside each input table.`
+                : 'Both permeability graphs have been updated.';
+        });
+
+        document.getElementById('clear-sweeps-btn').addEventListener('click', () => {
+            parameterSweep.clear();
+            document.getElementById('sweep-run-status').textContent =
+                'Graphs cleared. Enter values in the input tables, then run the graphs.';
+        });
+    </script>
+</body>
+</html>

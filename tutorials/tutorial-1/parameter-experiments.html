@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial 1: Concentration experiments</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="../../js/tutorialAccessibility.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-logo"><a href="../../index.html">Axon Lab</a></div>
+            <ul class="nav-menu">
+                <li><a href="../../index.html" class="nav-link">Home</a></li>
+                <li><a href="../../index.html#tutorials" class="nav-link">Tutorials</a></li>
+                <li><a href="experiment.html" class="nav-link">Membrane simulator</a></li>
+                <li><span class="nav-link-text">Tutorial 1 - Concentration experiments</span></li>
+                <li><a href="permeability-experiments.html" class="nav-link">Permeability experiments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="tutorial-header">
+        <div class="tutorial-header-container">
+            <p class="eyebrow">Tutorial 1 · Concentration experiments</p>
+            <h1>How do extracellular ion concentrations affect membrane potential?</h1>
+        </div>
+    </section>
+
+    <main id="main-content" class="tutorial-container parameter-experiments-page">
+        <section class="parameter-sweeps" aria-labelledby="sweep-heading">
+            <!-- <h2 id="sweep-heading">Explore concentration and membrane potential</h2> -->
+            <p>Enter one or more extracellular concentrations in each spreadsheet, then run the graphs. Each value changes only the named concentration; all other concentrations and permeabilities stay fixed at the most recently run settings from the membrane simulator.</p>
+            <p id="sweep-settings-status" class="simulation-status" role="status" aria-live="polite">Using default parameter settings. Run the membrane simulator first to use your own settings here.</p>
+
+            <div class="control-group compact-actions">
+                <button id="run-sweeps-btn" class="btn btn-primary" type="button">Run parameter graphs</button>
+                <button id="clear-sweeps-btn" class="btn btn-outline" type="button">Clear graphs and values</button>
+            </div>
+            <p id="sweep-run-status" class="simulation-status" role="status" aria-live="polite">Fill in the input tables, then run the graphs.</p>
+
+            <div class="sweep-grid">
+                <article class="sweep-card">
+                    <h3>Extracellular potassium</h3>
+                    <div class="sweep-card-content">
+                        <div class="sweep-inputs">
+                            <table class="sweep-input-table"><caption>Enter potassium values (0.5–20 mM)</caption><thead><tr><th scope="col">Trial</th><th scope="col">Potassium (mM)</th><th scope="col">Action</th></tr></thead><tbody id="sweep-k-out-values"></tbody></table>
+                            <button class="add-sweep-row" type="button" data-sweep-id="kOut">Add potassium value</button>
+                            <p id="sweep-kOut-status" class="sweep-status" role="status" aria-live="polite">Enter values for each trial.</p>
+                        </div>
+                        <div class="sweep-visualization">
+                            <div class="sweep-chart"><canvas id="sweep-chart-kOut" role="img" aria-label="Graph of extracellular potassium concentration and membrane potential" aria-describedby="sweep-kOut-description"></canvas></div>
+                            <p id="sweep-kOut-description">Membrane potential calculated at each extracellular potassium concentration using the selected settings for all other parameters.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="sweep-card">
+                    <h3>Extracellular sodium</h3>
+                    <div class="sweep-card-content">
+                        <div class="sweep-inputs">
+                            <table class="sweep-input-table"><caption>Enter sodium values (80–200 mM)</caption><thead><tr><th scope="col">Trial</th><th scope="col">Sodium (mM)</th><th scope="col">Action</th></tr></thead><tbody id="sweep-na-out-values"></tbody></table>
+                            <button class="add-sweep-row" type="button" data-sweep-id="naOut">Add sodium value</button>
+                            <p id="sweep-naOut-status" class="sweep-status" role="status" aria-live="polite">Enter values for each trial.</p>
+                        </div>
+                        <div class="sweep-visualization">
+                            <div class="sweep-chart"><canvas id="sweep-chart-naOut" role="img" aria-label="Graph of extracellular sodium concentration and membrane potential" aria-describedby="sweep-naOut-description"></canvas></div>
+                            <p id="sweep-naOut-description">Membrane potential calculated at each extracellular sodium concentration using the selected settings for all other parameters.</p>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <div class="button-group tutorial-footer-actions">
+            <a href="experiment.html" class="btn btn-outline">← Membrane simulator</a>
+            <a href="permeability-experiments.html" class="btn btn-outline">Permeability experiments →</a>
+            <a href="../tutorial-2/experiment.html" class="btn btn-primary">Next: Tutorial 2 — sodium action potential →</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Axon. Institute of Basic Medical science, University of Oslo.</p>
+    </footer>
+
+    <script src="../../js/chartAccessibility.js"></script>
+    <script src="../../js/modules/ghkCalculator.js"></script>
+    <script src="../../js/modules/ionConcentration.js"></script>
+    <script src="../../js/modules/simulator.js"></script>
+    <script src="../../js/parameterSweep.js"></script>
+    <script>
+        const simulator = new Simulator();
+        const parameterSweep = new ParameterSweep(simulator.ghkCalculator);
+        const settingsStatus = document.getElementById('sweep-settings-status');
+        let state = simulator.getState();
+
+        try {
+            const savedSettings = localStorage.getItem('axonTutorial1State');
+            if (savedSettings) {
+                const savedState = JSON.parse(savedSettings);
+                const ionKeys = ['KOut', 'KIn', 'NaOut', 'NaIn', 'ClOut', 'ClIn'];
+                const permeabilityKeys = ['PK', 'PNa', 'PCl'];
+                const valid = ionKeys.every((key) => Number.isFinite(savedState.ions[key])) &&
+                    permeabilityKeys.every((key) => Number.isFinite(savedState.permeability[key]));
+                if (valid) {
+                    state = savedState;
+                    settingsStatus.textContent = 'Using the most recently run settings from the membrane simulator.';
+                } else {
+                    settingsStatus.textContent = 'Saved settings were incomplete. Using the default parameter settings instead.';
+                }
+            }
+        } catch (error) {
+            console.error('Unable to load saved Tutorial 1 settings.', error);
+            settingsStatus.textContent = 'Saved settings could not be read. Using the default parameter settings instead.';
+        }
+
+        document.getElementById('run-sweeps-btn').addEventListener('click', () => {
+            const errors = parameterSweep.run(state);
+            document.getElementById('sweep-run-status').textContent = errors.length
+                ? `${errors.length} graph${errors.length === 1 ? '' : 's'} could not be updated. Check the message beside each input table.`
+                : 'Both concentration graphs have been updated.';
+        });
+
+        document.getElementById('clear-sweeps-btn').addEventListener('click', () => {
+            parameterSweep.clear();
+            document.getElementById('sweep-run-status').textContent =
+                'Graphs cleared. Enter values in the input tables, then run the graphs.';
+        });
+    </script>
+</body>
+</html>

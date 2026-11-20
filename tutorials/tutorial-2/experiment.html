@@ -7,10 +7,13 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/responsive.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../js/chartAccessibility.js"></script>
+    <script defer src="../../js/tutorialAccessibility.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <!-- Navigation Bar -->
-    <nav class="navbar">
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="../../index.html">Axon Lab</a>
@@ -60,11 +63,11 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="tutorial-container tutorial-layout tutorial-main">
+    <main id="main-content" class="tutorial-container tutorial-layout tutorial-main">
         <section class="tutorial-section simulator-section">
             <div class="parameter-panel">
                 <div class="parameter-bar-header">
-                    <h3>Parameters</h3>
+                    <h2>Simulation parameters</h2>
                 </div>
                 <div class="parameter-bar">
                 <div class="parameter-group">
@@ -210,25 +213,31 @@
             </div>
             </div>
 
+            <div class="panel-resizer" role="separator" aria-label="Resize parameter panel" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="600" aria-valuenow="320" aria-valuetext="320 pixels" tabindex="0"></div>
             <div class="chart-and-content">
             <div class="simulator-content">
                 <div class="content-header">
                     <p class="intro-text">
                         Adjust channel conductances or ion concentrations to observe how they affect the action potential waveform and refractory period.
                     </p>
-                    <div class="chart-actions">
-                        <button class="btn-icon" id="lockLinesBtn" type="button" title="Lock plotted lines" aria-label="Lock plotted lines" aria-pressed="false">&#128274;</button>
-                        <button class="btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts">⛶</button>
-                    </div>
                 </div>
 
-                <div class="chart-container">
-                    <div class="control-group compact-actions">
-                        <button id="run-btn" class="btn btn-primary">Run simulation</button>
-                        <button id="reset-btn" class="btn btn-outline">Reset</button>
-                        <button id="clear-btn" class="btn btn-outline">Clear</button>
+                <div class="simulation-toolbar" role="group" aria-label="Simulation controls">
+                    <div class="simulation-toolbar-actions">
+                        <button id="run-btn" class="btn btn-primary" type="button">Run simulation</button>
+                        <button id="reset-btn" class="btn btn-outline" type="button">Reset</button>
+                        <button id="clear-btn" class="btn btn-outline" type="button">Clear</button>
                     </div>
-
+                    <div class="chart-actions">
+                        <div class="simulator-view-toggle" role="group" aria-label="Choose simulator view">
+                            <button class="btn btn-outline" type="button" data-simulator-view="parameters" aria-pressed="false">Parameters</button>
+                            <button class="btn btn-outline" type="button" data-simulator-view="graphs" aria-pressed="true">Graphs</button>
+                        </div>
+                        <button class="btn btn-outline" id="lockLinesBtn" type="button" title="Lock plotted lines" aria-label="Lock plotted lines" aria-pressed="false">Lock lines</button>
+                        <button class="btn btn-outline btn-expand-chart" id="expandChartBtn" type="button" title="Expand charts" aria-label="Expand charts" aria-pressed="false">Expand charts</button>
+                    </div>
+                </div>
+                <div class="chart-container">
                     <div class="chart-panel" style="height: 400px; margin-bottom: 16px;">
                         <canvas id="vmChart" width="400" height="300"></canvas>
                     </div>
@@ -247,7 +256,7 @@
         </section>
         <div class="button-group tutorial-footer-actions">
             <a href="../../index.html" class="btn btn-outline">← Home</a>
-            <a href="../tutorial-3/experiment.html" class="btn btn-primary">Next: tutorial →</a>
+            <a href="../tutorial-3/experiment.html" class="btn btn-primary">Next: Tutorial 3 — passive spread along an axon →</a>
         </div>
     </main>
 
@@ -258,11 +267,16 @@
     <!-- Script Imports -->
     <script src="../../js/modules/hodgkinHuxleySimulator.js"></script>
     <script src="../../js/modules/hhVisualization.js"></script>
+    <script src="../../js/tutorialControls.js"></script>
     <script>
         // Initialize simulator and visualization
         const simulator = new HodgkinHuxleySimulator();
         const visualization = new HodgkinHuxleyVisualization('vmChart', 'currentChart', 'drivingForceChart');
         window.visualization = visualization;
+        window.initializeTutorialControls({
+            visualization,
+            resizeCharts: () => visualization.resizeCharts()
+        });
 
         // Parameter input handlers
         function setupParameterListeners() {
@@ -568,46 +582,6 @@
                 }
             });
         });
-
-        // Concept sidebar toggle
-        const conceptSidebar = document.getElementById('conceptSidebar');
-        const conceptToggle = document.getElementById('conceptToggle');
-        if (conceptSidebar && conceptToggle) {
-            conceptToggle.addEventListener('click', () => {
-                const isCollapsed = conceptSidebar.classList.toggle('collapsed');
-                conceptToggle.textContent = isCollapsed ? 'Show' : 'Hide';
-                conceptToggle.setAttribute('aria-expanded', String(!isCollapsed));
-            });
-        }
-
-        // Expand button for charts
-        const expandChartBtn = document.getElementById('expandChartBtn');
-        const chartContainer = document.querySelector('.chart-container');
-        const lockLinesBtn = document.getElementById('lockLinesBtn');
-        if (lockLinesBtn) {
-            lockLinesBtn.addEventListener('click', () => {
-                const locked = visualization.toggleLineLock();
-                lockLinesBtn.setAttribute('aria-pressed', String(locked));
-                lockLinesBtn.title = locked ? 'Unlock plotted lines' : 'Lock plotted lines';
-                lockLinesBtn.setAttribute('aria-label', lockLinesBtn.title);
-                lockLinesBtn.innerHTML = locked ? '&#128275;' : '&#128274;';
-                lockLinesBtn.classList.toggle('active', locked);
-            });
-        }
-        if (expandChartBtn && chartContainer) {
-            expandChartBtn.addEventListener('click', () => {
-                chartContainer.classList.toggle('expanded');
-                document.body.classList.toggle('chart-expanded');
-                expandChartBtn.textContent = chartContainer.classList.contains('expanded') ? '✕' : '⛶';
-                
-                // Trigger chart resize after a brief delay to allow CSS to apply
-                setTimeout(() => {
-                    if (visualization && typeof visualization.resizeCharts === 'function') {
-                        visualization.resizeCharts();
-                    }
-                }, 50);
-            });
-        }
 
         // Initialize parameter listeners on page load
         setupParameterListeners();
